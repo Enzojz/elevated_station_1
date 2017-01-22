@@ -18,10 +18,13 @@ This the first release, Please take attention to use it with your important game
 
 ---------------
 Changelog
+1.2
+- Fixed 320m station street connection bug
+- Fixed failure on large road connection from the back side of the station
 1.1
-Bugfix and improvements to materials
+- Bugfix and improvements to materials
 1.0
-First release
+- First release
 --------------- 
 * Planned projects 
 - Curved station 
@@ -50,6 +53,9 @@ C'est la première verison, veuillez être prudent lors utilisation avec votre s
 
 ---------------
 Changelog
+1.2
+- Correction du bug de connexion routière sur la gare de 320m
+- Correction du bug d'échec de connexion routière de côté arrière de la gare
 1.1
 Correction et amélioration des matériaux
 1.0
