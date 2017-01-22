@@ -1,0 +1,42 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {0.25, 5, 11},
+            bbMin = {-0.25, -5, 0},
+        },
+        collider = {
+            params = {
+            
+            },
+            type = "MESH",
+        },
+        lods = {
+            {
+                children = {
+                    {
+                        id = "station/train/passenger/elevated_station/entry_15.msh",
+                        transf = {
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1
+                        },
+                        type = "MESH",
+                    },
+                },
+                matConfigs = {
+                    {0, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 2000,
+            },
+        },
+        metadata = {
+            cost = {
+                price = 0,
+            },
+        },
+    
+    }
+end

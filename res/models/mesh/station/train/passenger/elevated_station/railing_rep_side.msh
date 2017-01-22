@@ -1,0 +1,82 @@
+function data()
+return {
+	animations = {
+		--Animation Config goes here!
+	},
+	matConfigs = {
+		{
+			0, 0, 
+		},
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 888,
+					offset = 0,
+				},
+				position = {
+					count = 888,
+					offset = 888,
+				},
+				tangent = {
+					count = 888,
+					offset = 1776,
+				},
+				uv0 = {
+					count = 888,
+					offset = 2664,
+				},
+			},
+			materials = {
+				"station/train/passenger/elevated_station/concrete.mtl",
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 2592,
+					offset = 3552,
+				},
+				position = {
+					count = 2592,
+					offset = 6144,
+				},
+				tangent = {
+					count = 2592,
+					offset = 8736,
+				},
+				uv0 = {
+					count = 2592,
+					offset = 11328,
+				},
+			},
+			materials = {
+				"station/train/passenger/elevated_station/fence.mtl",
+			},
+		},
+	},
+	vertexAttr = {
+		normal = {
+			count = 504,
+			numComp = 3,
+			offset = 13920,
+		},
+		position = {
+			count = 2040,
+			numComp = 3,
+			offset = 14424,
+		},
+		tangent = {
+			count = 4640,
+			numComp = 4,
+			offset = 16464,
+		},
+		uv0 = {
+			count = 3464,
+			numComp = 2,
+			offset = 21104,
+		},
+	},
+}
+end
