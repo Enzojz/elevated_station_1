@@ -27,17 +27,23 @@ local makeTerminals = function(terminals, side, track)
     }
 end
 
-local function generateTrackGroups(xOffsets, length, height)
+local function generateTrackGroups(xOffsets, xParity, length, height)
     local halfLength = length * 0.5
-    return laneutil.makeLanes(
-        func.mapFlatten(xOffsets,
-            function(xOffset)
-                return {
+    return laneutil.makeLanes(func.flatten(
+        func.map2(xOffsets, xParity,
+            function(xOffset, xPa)
+                return xPa == 0 and
+                {
                     {{xOffset, -halfLength, height}, {xOffset, 0, height}, {0, 1, 0}, {0, 1, 0}},
                     {{xOffset, 0, height}, {xOffset, halfLength, height}, {0, 1, 0}, {0, 1, 0}}
                 }
+                or 
+                {
+                    {{xOffset, halfLength, height}, {xOffset, 0, height}, {0, -1, 0}, {0, -1, 0}},
+                    {{xOffset, 0, height}, {xOffset, -halfLength, height}, {0, -1, 0}, {0, -1, 0}}
+                }
             end
-))
+    )))
 end
 
 local function snapRule(n) return function(e) return func.filter(func.seq(0, #e - 1), function(i) return (i > n) and (i - 3) % 4 == 0 end) end end
@@ -78,9 +84,7 @@ local function params()
         {
             key = "tramTrackType",
             name = _("Tram track"),
-            values = {_("No"), _("Yes"), _("Electric")},
-            yearFrom = tramCatenaryYearFrom,
-            yearTo = 0
+            values = {_("No"), _("Yes"), _("Electric")}
         }
     }
 end
@@ -89,20 +93,22 @@ local function buildCoors(nSeg)
     local groupWidth = trackWidth + platformWidth
     
     local function buildUIndex(uOffset, ...) return {func.seq(uOffset * nSeg, (uOffset + 1) * nSeg - 1), {...}} end
-    local function build(nbTracks, baseX, xOffsets, uOffsets, xuIndex)
+    local function build(nbTracks, baseX, xOffsets, uOffsets, xuIndex, xParity)
         if (nbTracks == 0) then
-            return xOffsets, uOffsets, xuIndex
+            return xOffsets, uOffsets, xuIndex, xParity
         elseif (nbTracks == 1) then
             return build(nbTracks - 1, baseX + groupWidth - 0.5 * trackWidth,
                 func.concat(xOffsets, {baseX + platformWidth}),
                 func.concat(uOffsets, {baseX + platformWidth - trackWidth}),
-                func.concat(xuIndex, {buildUIndex(#uOffsets, {1, #xOffsets + 1})})
+                func.concat(xuIndex, {buildUIndex(#uOffsets, {1, #xOffsets + 1})}),
+                func.concat(xParity, {1})
         )
         else
             return build(nbTracks - 2, baseX + groupWidth + trackWidth,
                 func.concat(xOffsets, {baseX, baseX + groupWidth}),
                 func.concat(uOffsets, {baseX + 0.5 * groupWidth}),
-                func.concat(xuIndex, {buildUIndex(#uOffsets, {0, #xOffsets + 1}, {1, #xOffsets + 2})})
+                func.concat(xuIndex, {buildUIndex(#uOffsets, {0, #xOffsets + 1}, {1, #xOffsets + 2})}),
+                func.concat(xParity, {0, 1})
         )
         end
     end
@@ -439,10 +445,10 @@ local function updateFn(config)
             local hasClassicRoofs = params.roofStyle == 2
             local tramTrack = ({"NO", "YES", "ELECTRIC"})[(params.tramTrackType == nil and 0 or params.tramTrackType) + 1]
             
-            local xOffsets, uOffsets, xuIndex = buildCoors(nSeg)(nbTracks, 0, {}, {}, {})
+            local xOffsets, uOffsets, xuIndex, xParity = buildCoors(nSeg)(nbTracks, 0, {}, {}, {}, {})
             
-            local normal = generateTrackGroups(xOffsets, length, height)
-            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(generateTrackGroups(xOffsets, 10, height))
+            local normal = generateTrackGroups(xOffsets, xParity, length, height)
+            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(generateTrackGroups(xOffsets, func.seqMap({1, #xOffsets}, function(_) return 0 end), 10, height))
             local ext2 = coor.applyEdges(coor.flipY(), coor.flipY())(ext1)
             
             local roofConfig = function()
@@ -462,7 +468,7 @@ local function updateFn(config)
                 {
                     {
                         trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2})),
-                        trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", noSnap)(generateTrackGroups(uOffsets, length, height)),
+                        trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", noSnap)(generateTrackGroups(uOffsets, func.seqMap({1, #uOffsets}, function(_) return 0 end), length, height)),
                     },
                     makeStreet(#xOffsets + #uOffsets, tramTrack)
                 })

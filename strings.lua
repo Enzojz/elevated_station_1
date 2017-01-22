@@ -18,6 +18,8 @@ This the first release, Please take attention to use it with your important game
 
 ---------------
 Changelog
+1.3
+- Fixed bug that door opens always on right side
 1.2
 - Fixed 320m station street connection bug
 - Fixed failure on large road connection from the back side of the station
@@ -53,13 +55,15 @@ C'est la première verison, veuillez être prudent lors utilisation avec votre s
 
 ---------------
 Changelog
+1.3
+- Correction de bug d'ouverture de porte qu'à côté droite
 1.2
 - Correction du bug de connexion routière sur la gare de 320m
 - Correction du bug d'échec de connexion routière de côté arrière de la gare
 1.1
-Correction et amélioration des matériaux
+- Correction et amélioration des matériaux
 1.0
-Première version
+- Première version
 --------------- 
 * Projets planifé 
 - Gare en courbe 
@@ -79,6 +83,18 @@ local desc_zh = [[一种非常节约用地的高架车站
 * 额外的出口
 * 2、6、10股道配置下的侧岛式车站配置
 * 无站台正线
+
+---------------
+Changelog
+1.3
+- 修正了只在右边开车门的错误
+1.2
+- 修正了320米车站无法进行道路连接的错误
+- 修正了无法从车站背面连接最宽道路的错误
+1.1
+- 修正和改进了材质
+1.0
+- 首次发布
 ]]
 
 function data()
