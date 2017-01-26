@@ -144,4 +144,12 @@ function func.range(ls, from, to)
     return result
 end
 
+function func.max(ls, less)
+    return func.fold(ls, ls[1], function(l, r) return less(l, r) and r or l end) 
+end
+
+function func.min(ls, less)
+    return func.fold(ls, ls[1], function(l, r) return less(l, r) and l or r end) 
+end
+
 return func

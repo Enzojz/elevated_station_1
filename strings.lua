@@ -10,11 +10,8 @@ To be implemented:
 * Extra street connection
 * Central track layouts for 2, 6, 10 tracks configuration
 * Central tracks without platforms
+* 1920 era station
 * As suggestion from players
-
-=== WARNING ===
-This the first release, Please take attention to use it with your important game saves.
-=== WARNING ===
 
 ---------------
 Changelog
@@ -48,10 +45,6 @@ Caractéristiques:
 * Connection de rue supplémentaire
 * Voie central pour configuration de 2, 6, 10 voies
 * Voie centrales sans platformes
-
-=== ATTENTION ===
-C'est la première verison, veuillez être prudent lors utilisation avec votre sauvegarde important! 
-=== ATTENTION ===
 
 ---------------
 Changelog

@@ -5,12 +5,11 @@ local func = require "func"
 local coor = require "coor"
 local line = require "coorline"
 local trackEdge = require "trackedge"
+local station = require "stationlib"
+local dump = require "datadumper"
 
 local platformSegments = {2, 4, 8, 12, 16, 20, 24}
 local heightList = {12.5, 15, 17.5, 20}
-local segmentLength = 20
-local platformWidth = 5
-local trackWidth = 5
 local trackNumberList = {2, 3, 4, 5, 6, 7, 8, 10, 12}
 
 local newModel = function(m, ...)
@@ -20,34 +19,7 @@ local newModel = function(m, ...)
     }
 end
 
-local makeTerminals = function(terminals, side, track)
-    return {
-        terminals = func.map(terminals, function(t) return {t, side} end),
-        vehicleNodeOverride = track * 4 - 2
-    }
-end
-
-local function generateTrackGroups(xOffsets, xParity, length, height)
-    local halfLength = length * 0.5
-    return laneutil.makeLanes(func.flatten(
-        func.map2(xOffsets, xParity,
-            function(xOffset, xPa)
-                return xPa == 0 and
-                {
-                    {{xOffset, -halfLength, height}, {xOffset, 0, height}, {0, 1, 0}, {0, 1, 0}},
-                    {{xOffset, 0, height}, {xOffset, halfLength, height}, {0, 1, 0}, {0, 1, 0}}
-                }
-                or 
-                {
-                    {{xOffset, halfLength, height}, {xOffset, 0, height}, {0, -1, 0}, {0, -1, 0}},
-                    {{xOffset, 0, height}, {xOffset, -halfLength, height}, {0, -1, 0}, {0, -1, 0}}
-                }
-            end
-    )))
-end
-
 local function snapRule(n) return function(e) return func.filter(func.seq(0, #e - 1), function(i) return (i > n) and (i - 3) % 4 == 0 end) end end
-local noSnap = function(e) return {} end
 
 local function params()
     return {
@@ -59,7 +31,7 @@ local function params()
         {
             key = "length",
             name = _("Platform length") .. "(m)",
-            values = func.map(platformSegments, function(l) return _(tostring(l * segmentLength)) end),
+            values = func.map(platformSegments, function(l) return _(tostring(l * station.segmentLength)) end),
             defaultIndex = 2
         },
         paramsutil.makeTrackTypeParam(),
@@ -89,31 +61,6 @@ local function params()
     }
 end
 
-local function buildCoors(nSeg)
-    local groupWidth = trackWidth + platformWidth
-    
-    local function buildUIndex(uOffset, ...) return {func.seq(uOffset * nSeg, (uOffset + 1) * nSeg - 1), {...}} end
-    local function build(nbTracks, baseX, xOffsets, uOffsets, xuIndex, xParity)
-        if (nbTracks == 0) then
-            return xOffsets, uOffsets, xuIndex, xParity
-        elseif (nbTracks == 1) then
-            return build(nbTracks - 1, baseX + groupWidth - 0.5 * trackWidth,
-                func.concat(xOffsets, {baseX + platformWidth}),
-                func.concat(uOffsets, {baseX + platformWidth - trackWidth}),
-                func.concat(xuIndex, {buildUIndex(#uOffsets, {1, #xOffsets + 1})}),
-                func.concat(xParity, {1})
-        )
-        else
-            return build(nbTracks - 2, baseX + groupWidth + trackWidth,
-                func.concat(xOffsets, {baseX, baseX + groupWidth}),
-                func.concat(uOffsets, {baseX + 0.5 * groupWidth}),
-                func.concat(xuIndex, {buildUIndex(#uOffsets, {0, #xOffsets + 1}, {1, #xOffsets + 2})}),
-                func.concat(xParity, {0, 1})
-        )
-        end
-    end
-    return build
-end
 
 local function makeStreet(n, tramTrack)
     
@@ -439,22 +386,38 @@ local function updateFn(config)
             local trackType = ({"standard.lua", "high_speed.lua"})[params.trackType + 1]
             local catenary = params.catenary == 1
             local nSeg = platformSegments[params.length + 1]
-            local length = nSeg * segmentLength
+            local length = nSeg * station.segmentLength
             local nbTracks = trackNumberList[params.nbTracks + 1]
             local height = heightList[params.platformHeight + 1]
             local hasClassicRoofs = params.roofStyle == 2
             local tramTrack = ({"NO", "YES", "ELECTRIC"})[(params.tramTrackType == nil and 0 or params.tramTrackType) + 1]
             
-            local xOffsets, uOffsets, xuIndex, xParity = buildCoors(nSeg)(nbTracks, 0, {}, {}, {}, {})
+            local levels = {
+                {
+                    mz = coor.transZ(height),
+                    mr = coor.I(),
+                    mdr = coor.I(),
+                    id = 1,
+                    nbTracks = nbTracks,
+                    baseX = 0,
+                    ignoreFst = nbTracks % 4 == 0,
+                    ignoreLst = nbTracks % 4 == 0
+                }
+            }
             
-            local normal = generateTrackGroups(xOffsets, xParity, length, height)
-            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(generateTrackGroups(xOffsets, func.seqMap({1, #xOffsets}, function(_) return 0 end), 10, height))
+            
+            local xOffsets, uOffsets, xuIndex, xParity = station.buildCoors(nSeg)(levels, {}, {}, {}, {})
+            
+            local normal = station.generateTrackGroups(xOffsets, length)
+            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(station.generateTrackGroups(xOffsets, 10))
             local ext2 = coor.applyEdges(coor.flipY(), coor.flipY())(ext1)
             
+            local offsets = func.flatten({xOffsets, uOffsets})
+            table.sort(offsets, function(l, r) return l.x < r.x end)
             local roofConfig = function()
                 return {
-                    halfWidth = (xOffsets[#xOffsets] - xOffsets[1] + 10) * 0.5,
-                    oX = (xOffsets[#xOffsets] + xOffsets[1]) * 0.5,
+                    halfWidth = (offsets[#offsets].x - offsets[1].x + 10) * 0.5,
+                    oX = (offsets[#offsets].x + offsets[1].x) * 0.5,
                     span = ({1, 2, 2})[(params.roofStyle + 1 or 1)],
                     roofLength = hasClassicRoofs and 0 or ({0, 0.25, 0.5, 0.75, 1})[params.roofLength + 1] * length,
                     baseRadMax = 15 * math.pi / 180,
@@ -463,12 +426,12 @@ local function updateFn(config)
                     height = height,
                 }
             end
-            
+            --snapRule(#normal)
             result.edgeLists = func.flatten(
                 {
                     {
-                        trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2})),
-                        trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", noSnap)(generateTrackGroups(uOffsets, func.seqMap({1, #uOffsets}, function(_) return 0 end), length, height)),
+                        trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", station.noSnap)(func.flatten({normal, ext1, ext2})),
+                        trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length)),
                     },
                     makeStreet(#xOffsets + #uOffsets, tramTrack)
                 })
@@ -477,30 +440,15 @@ local function updateFn(config)
             result.models =
                 func.flatten(
                     {
-                        func.mapFlatten(uOffsets,
-                            function(xOffset)
-                                return func.map2(func.seq(1, nSeg), platformPatterns(nSeg), function(i, p)
-                                    return newModel(p, coor.transY(i * segmentLength - 0.5 * (segmentLength + length)), coor.transX(xOffset), coor.transZ(0.3 + height)) end
-                            )
-                            end),
-                        func.mapFlatten(hasClassicRoofs and uOffsets or {},
-                            function(xOffset)
-                                return func.map2(func.seq(1, nSeg), roofPatterns(nSeg), function(i, p)
-                                    return newModel(p, coor.transY(i * segmentLength - 0.5 * (segmentLength + length)), coor.transX(xOffset), coor.transZ(0.3 + height)) end
-                            )
-                            end),
-                        makeRoof(roofConfig()),
+                        station.makePlatforms(uOffsets, platformPatterns(nSeg), coor.transZ(0.3)),
+                        hasClassicRoofs and station.makePlatforms(uOffsets, roofPatterns(nSeg)) or makeRoof(roofConfig()),
                         makeEntry(height, length, #xOffsets + #uOffsets)
                     })
             
-            result.terminalGroups = func.mapFlatten(xuIndex, function(v)
-                local u, xIndices = table.unpack(v)
-                return func.map(xIndices, function(x) return makeTerminals(u, table.unpack(x)) end
-            )
-            end)
+            result.terminalGroups = station.makeTerminals(xuIndex)
             
             local l = -5
-            local r = -2.5 + (#xOffsets * trackWidth + #uOffsets * platformWidth) + 2.5
+            local r = -2.5 + (#xOffsets * station.trackWidth + #uOffsets * station.platformWidth) + 2.5
             local e = 0.5 * length + 20
             local f = {{l, -35, 0}, {r, -35, 0}, {r, 35, 0}, {l, 35, 0}}
             
