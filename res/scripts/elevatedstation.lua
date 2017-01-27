@@ -6,7 +6,6 @@ local coor = require "coor"
 local line = require "coorline"
 local trackEdge = require "trackedge"
 local station = require "stationlib"
-local dump = require "datadumper"
 
 local platformSegments = {2, 4, 8, 12, 16, 20, 24}
 local heightList = {12.5, 15, 17.5, 20}
