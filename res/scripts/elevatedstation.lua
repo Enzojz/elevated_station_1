@@ -407,8 +407,18 @@ local function updateFn(config)
             
             local xOffsets, uOffsets, xuIndex, xParity = station.buildCoors(nSeg)(levels, {}, {}, {}, {})
             
+            local function resetParity(offset) 
+                return {
+                    mpt = offset.mpt,
+                    mvec = offset.mvec,
+                    parity = coor.I(),
+                    id = offset.id,
+                    x = offset.x
+                }
+            end
+
             local normal = station.generateTrackGroups(xOffsets, length)
-            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(station.generateTrackGroups(xOffsets, 10))
+            local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(station.generateTrackGroups(func.map(xOffsets, resetParity), 10))
             local ext2 = coor.applyEdges(coor.flipY(), coor.flipY())(ext1)
             
             local offsets = func.flatten({xOffsets, uOffsets})
@@ -425,11 +435,11 @@ local function updateFn(config)
                     height = height,
                 }
             end
-            --snapRule(#normal)
+            
             result.edgeLists = func.flatten(
                 {
                     {
-                        trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", station.noSnap)(func.flatten({normal, ext1, ext2})),
+                        trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2})),
                         trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length)),
                     },
                     makeStreet(#xOffsets + #uOffsets, tramTrack)

@@ -34,7 +34,7 @@ local config = {
     },
     order = 27218 * 10000,
     soundConfig = {
-        soundSet = {name = "station_passenger_old"}
+		soundSet = { name = "station_passenger_new" }
     },
     platformRepeat = "station/train/passenger/1990/platform_double_repeat.mdl",
     platformStart = "station/train/passenger/1990/platform_double_start.mdl",

@@ -33,6 +33,29 @@ stationlib.generateTrackGroups = function(xOffsets, length)
 ))
 end
 
+stationlib.preBuild = function(totalTracks, baseX, ignoreFst, ignoreLst)
+    local groupWidth = stationlib.trackWidth + stationlib.platformWidth
+    local function build(nbTracks, baseX, xOffsets, uOffsets)
+        if (nbTracks == 0) then
+            return xOffsets, uOffsets
+        elseif ((nbTracks == 1 and ignoreLst) or (nbTracks == totalTracks and not ignoreFst)) then
+            return build(nbTracks - 1, baseX + groupWidth,
+                func.concat(xOffsets, {baseX + 0.5 * groupWidth}),
+                func.concat(uOffsets, {baseX}))
+        elseif (nbTracks == 1 and not ignoreLst) then
+            return build(nbTracks - 1, baseX + groupWidth - 0.5 * stationlib.trackWidth,
+                func.concat(xOffsets, {baseX}),
+                func.concat(uOffsets, {baseX + 0.5 * groupWidth}))
+        else return build(nbTracks - 2, baseX + groupWidth + stationlib.trackWidth,
+            func.concat(xOffsets, {baseX, baseX + groupWidth}),
+            func.concat(uOffsets, {baseX + 0.5 * groupWidth})
+        )
+        end
+    end
+
+    return build(totalTracks, baseX, {}, {})
+end
+
 stationlib.buildCoors = function(nSeg)
     local groupWidth = stationlib.trackWidth + stationlib.platformWidth
     

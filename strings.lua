@@ -8,13 +8,14 @@ Features:
 
 To be implemented:
 * Extra street connection
-* Central track layouts for 2, 6, 10 tracks configuration
 * Central tracks without platforms
 * 1920 era station
 * As suggestion from players
 
 ---------------
 Changelog
+1.4
+- Central tracks for 2, 6, 10 tracks configurations
 1.3
 - Fixed bug that door opens always on right side
 1.2
@@ -43,11 +44,12 @@ Caractéristiques:
 
 À implémenter
 * Connection de rue supplémentaire
-* Voie central pour configuration de 2, 6, 10 voies
 * Voie centrales sans platformes
 
 ---------------
 Changelog
+1.4
+- Voies centrales pour les configuration de 2, 6, 10 voies
 1.3
 - Correction de bug d'ouverture de porte qu'à côté droite
 1.2
@@ -79,6 +81,8 @@ local desc_zh = [[一种非常节约用地的高架车站
 
 ---------------
 Changelog
+1.4
+- 将2, 6, 10轨道布局改成了侧岛式站台
 1.3
 - 修正了只在右边开车门的错误
 1.2

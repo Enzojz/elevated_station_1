@@ -144,6 +144,10 @@ function func.range(ls, from, to)
     return result
 end
 
+function func.seqValue(n, value)
+    return func.seqMap({1, n}, function(_) return value end)
+end
+
 function func.max(ls, less)
     return func.fold(ls, ls[1], function(l, r) return less(l, r) and r or l end) 
 end
