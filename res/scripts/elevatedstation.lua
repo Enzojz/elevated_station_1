@@ -36,6 +36,12 @@ local function params()
         paramsutil.makeTrackTypeParam(),
         paramsutil.makeTrackCatenaryParam(),
         {
+            key = "centralTracks",
+            name = _("Keep tracks central"),
+            values = {_("No"), _("Yes")},
+            defaultIndex = 0
+        },
+        {
             key = "platformHeight",
             name = _("Station height") .. "(m)",
             values = func.map(heightList, tostring),
@@ -390,7 +396,8 @@ local function updateFn(config)
             local height = heightList[params.platformHeight + 1]
             local hasClassicRoofs = params.roofStyle == 2
             local tramTrack = ({"NO", "YES", "ELECTRIC"})[(params.tramTrackType == nil and 0 or params.tramTrackType) + 1]
-            
+            local keepCenTracks = params.centralTracks == 1
+
             local levels = {
                 {
                     mz = coor.transZ(height),
@@ -399,8 +406,8 @@ local function updateFn(config)
                     id = 1,
                     nbTracks = nbTracks,
                     baseX = 0,
-                    ignoreFst = nbTracks % 4 == 0,
-                    ignoreLst = nbTracks % 4 == 0
+                    ignoreFst = keepCenTracks and false or nbTracks % 4 == 0,
+                    ignoreLst = keepCenTracks and false or nbTracks % 4 == 0 
                 }
             }
             

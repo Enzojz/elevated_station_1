@@ -14,6 +14,8 @@ To be implemented:
 
 ---------------
 Changelog
+1.5
+- Added the option to have central tracks or not
 1.4
 - Central tracks for 2, 6, 10 tracks configurations
 1.3
@@ -48,6 +50,8 @@ Caractéristiques:
 
 ---------------
 Changelog
+1.5
+- Ajoute d'option pour voies centrale
 1.4
 - Voies centrales pour les configuration de 2, 6, 10 voies
 1.3
@@ -81,6 +85,8 @@ local desc_zh = [[一种非常节约用地的高架车站
 
 ---------------
 Changelog
+1.5
+- 增加了中央轨道的选项
 1.4
 - 将2, 6, 10轨道布局改成了侧岛式站台
 1.3
@@ -104,6 +110,7 @@ function data()
             ["name"] = "Gare surélévée",
             ["desc"] = desc_fr,
             ["Number of tracks"] = "Nombre de voies",
+            ["Always tracks in the middle"] = "Voies au centre",
             ["Platform length"] = "Longeur de plateforms",
             ["Station height"] = "Hauteur de la gare",
             ["Roof length"] = "Longeur de plafond",
@@ -117,6 +124,7 @@ function data()
             ["name"] = "高架车站",
             ["desc"] = desc_zh,
             ["Number of tracks"] = "轨道数量",
+            ["Always tracks in the middle"] = "轨道位于中央",
             ["Platform length"] = "站台长度",
             ["Station height"] = "车站高度",
             ["Roof length"] = "顶棚长度",
