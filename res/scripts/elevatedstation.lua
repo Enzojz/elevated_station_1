@@ -37,7 +37,7 @@ local function params()
         paramsutil.makeTrackCatenaryParam(),
         {
             key = "centralTracks",
-            name = _("Keep tracks central"),
+            name = _("Always tracks in the middle"),
             values = {_("No"), _("Yes")},
             defaultIndex = 0
         },
@@ -58,11 +58,8 @@ local function params()
             name = "Roof frame Density",
             values = {_("Normal"), _("Less dense"), ("Simple")}
         },
-        {
-            key = "tramTrackType",
-            name = _("Tram track"),
-            values = {_("No"), _("Yes"), _("Electric")}
-        }
+        paramsutil.makeTramTrackParam1(),
+        paramsutil.makeTramTrackParam2()
     }
 end
 
@@ -364,6 +361,18 @@ local function makeRoof(config)
 
 end
 
+local function defaultParams(params)
+    params.trackType = params.trackType or 0
+    params.catenary = params.catenary or 1
+    params.length = params.length or 2
+    params.nbTracks = params.nbTracks or 0
+    params.platformHeight = params.platformHeight or 1
+    params.roofLength = params.roofLength or 3
+    params.roofStyle = params.roofStyle or 0
+    params.tramTrack = params.tramTrack or 0
+    params.centralTracks = params.centralTracks or 0
+end
+
 local function updateFn(config)
     
     local platformPatterns = function(n)
@@ -385,7 +394,7 @@ local function updateFn(config)
     
     return
         function(params)
-            
+            defaultParams(params)
             local result = {}
             
             local trackType = ({"standard.lua", "high_speed.lua"})[params.trackType + 1]
@@ -395,8 +404,10 @@ local function updateFn(config)
             local nbTracks = trackNumberList[params.nbTracks + 1]
             local height = heightList[params.platformHeight + 1]
             local hasClassicRoofs = params.roofStyle == 2
-            local tramTrack = ({"NO", "YES", "ELECTRIC"})[(params.tramTrackType == nil and 0 or params.tramTrackType) + 1]
+            local tramTrack = ({"NO", "YES", "ELECTRIC"})[params.tramTrack + 1]
             local keepCenTracks = params.centralTracks == 1
+
+
 
             local levels = {
                 {
@@ -406,8 +417,8 @@ local function updateFn(config)
                     id = 1,
                     nbTracks = nbTracks,
                     baseX = 0,
-                    ignoreFst = keepCenTracks and false or nbTracks % 4 == 0,
-                    ignoreLst = keepCenTracks and false or nbTracks % 4 == 0 
+                    ignoreFst = ({false, true})[params.centralTracks + 1],
+                    ignoreLst = ({false, true})[params.centralTracks + 1] 
                 }
             }
             

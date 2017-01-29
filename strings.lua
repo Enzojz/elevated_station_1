@@ -1,6 +1,6 @@
 local desc_en = [[An elevated station minimizing the use of terrain.
 Features:
-* From 4 to 12 tracks
+* From 2 to 12 tracks
 * From 40m to 480m platform lengths
 * Santiago Calatrava style roof inspired by Reggio Emilia AV Mediopadana Station, or simple roofs
 * Customizable roofs
