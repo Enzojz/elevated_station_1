@@ -17,12 +17,13 @@ local stationlib = {
 }
 
 
-stationlib.generateTrackGroups = function(xOffsets, length)
+stationlib.generateTrackGroups = function(xOffsets, length, extra)
     local halfLength = length * 0.5
+    extra = extra or { mpt = coor.I(), mvec = coor.I() }
     return func.flatten(
         func.map(xOffsets,
             function(xOffset)
-                return coor.applyEdges(coor.mul(xOffset.parity, xOffset.mpt), coor.mul(xOffset.parity, xOffset.mvec))(
+                return coor.applyEdges(coor.mul(xOffset.parity, extra.mpt, xOffset.mpt), coor.mul(xOffset.parity, extra.mvec, xOffset.mvec))(
                     {
                         {{0, -halfLength, 0}, {0, halfLength, 0}},
                         {{0, 0, 0}, {0, halfLength, 0}},
@@ -52,7 +53,7 @@ stationlib.preBuild = function(totalTracks, baseX, ignoreFst, ignoreLst)
         )
         end
     end
-
+    
     return build(totalTracks, baseX, {}, {})
 end
 

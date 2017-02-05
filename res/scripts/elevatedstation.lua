@@ -65,34 +65,32 @@ end
 
 
 local function makeStreet(n, tramTrack)
-    
-    local lanes = func.mapFlatten(func.seq(1, n - 1), function(n) return {{{n * 5 - 5, 0, 0}, {1, 0, 0}}, {{n * 5, 0, 0}, {1, 0, 0}}} end)
+    local l = n * 5 - 15
     return {
         {
             type = "STREET",
             params =
             {
-                type = "station_new_small.lua",
+                type = "new_small.lua",
                 tramTrackType = tramTrack
             },
-            edges = func.flatten(
-                {
-                    {
-                        {{-30, 0, 0}, {1, 0, 0}},
-                        {{-5, 0, 0}, {1, 0, 0}},
-                        {{-5, 0, 0}, {1, 0, 0}},
-                        {{0, 0, 0}, {1, 0, 0}},
-                    },
-                    {
-                        {{n * 5 - 5, 0, 0}, {1, 0, 0}},
-                        {{n * 5, 0, 0}, {1, 0, 0}},
-                        {{n * 5, 0, 0}, {1, 0, 0}},
-                        {{n * 5 + 25, 0, 0}, {1, 0, 0}},
-                    },
-                    lanes
-                }
-            ),
-            snapNodes = {0, 7}
+            edges =
+            {
+                {{5 + l * 0.5, 0, 0}, {-l * 0.5, 0, 0}},
+                {{5, 0, 0}, {-l * 0.5, 0, 0}},
+                {{5, 0, 0}, {-15, 0, 0}},
+                {{-10, 0, 0}, {-15, 0, 0}},
+                {{-10, 0, 0}, {-20, 0, 0}},
+                {{-30, 0, 0}, {-20, 0, 0}},
+
+                {{5 + l * 0.5, 0, 0}, {l * 0.5, 0, 0}},
+                {{l + 5, 0, 0}, {l * 0.5, 0, 0}},
+                {{l + 5, 0, 0}, {15, 0, 0}},
+                {{l + 20, 0, 0}, {15, 0, 0}},
+                {{l + 20, 0, 0}, {20, 0, 0}},
+                {{l + 40, 0, 0}, {20, 0, 0}},
+            },
+            snapNodes = {5, 11}
         }
     }
 end
@@ -406,9 +404,9 @@ local function updateFn(config)
             local hasClassicRoofs = params.roofStyle == 2
             local tramTrack = ({"NO", "YES", "ELECTRIC"})[params.tramTrack + 1]
             local keepCenTracks = params.centralTracks == 1
-
-
-
+            
+            
+            
             local levels = {
                 {
                     mz = coor.transZ(height),
@@ -418,14 +416,14 @@ local function updateFn(config)
                     nbTracks = nbTracks,
                     baseX = 0,
                     ignoreFst = ({false, true})[params.centralTracks + 1],
-                    ignoreLst = ({false, true})[params.centralTracks + 1] 
+                    ignoreLst = ({false, true})[params.centralTracks + 1]
                 }
             }
             
             
             local xOffsets, uOffsets, xuIndex, xParity = station.buildCoors(nSeg)(levels, {}, {}, {}, {})
             
-            local function resetParity(offset) 
+            local function resetParity(offset)
                 return {
                     mpt = offset.mpt,
                     mvec = offset.mvec,
@@ -434,7 +432,7 @@ local function updateFn(config)
                     x = offset.x
                 }
             end
-
+            
             local normal = station.generateTrackGroups(xOffsets, length)
             local ext1 = coor.applyEdges(coor.transY(length * 0.5 + 5), coor.I())(station.generateTrackGroups(func.map(xOffsets, resetParity), 10))
             local ext2 = coor.applyEdges(coor.flipY(), coor.flipY())(ext1)
@@ -456,11 +454,9 @@ local function updateFn(config)
             
             result.edgeLists = func.flatten(
                 {
-                    {
-                        trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2})),
-                        trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length)),
-                    },
-                    makeStreet(#xOffsets + #uOffsets, tramTrack)
+                    {trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))},
+                    makeStreet(#xOffsets + #uOffsets, tramTrack),
+                    {trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))}
                 })
             
             
@@ -468,8 +464,8 @@ local function updateFn(config)
                 func.flatten(
                     {
                         station.makePlatforms(uOffsets, platformPatterns(nSeg), coor.transZ(0.3)),
+                        makeEntry(height, length, #xOffsets + #uOffsets),
                         hasClassicRoofs and station.makePlatforms(uOffsets, roofPatterns(nSeg)) or makeRoof(roofConfig()),
-                        makeEntry(height, length, #xOffsets + #uOffsets)
                     })
             
             result.terminalGroups = station.makeTerminals(xuIndex)
@@ -511,8 +507,8 @@ local elevatedstation = {
             return {
                 type = "RAIL_STATION",
                 description = {
-                    name = _("Underground / Multi-level Passenger Station"),
-                    description = _("An underground / multi-level passenger station")
+                    name = _("Elevated Train Station"),
+                    description = _("An elevated train station")
                 },
                 availability = config.availability,
                 order = config.order,

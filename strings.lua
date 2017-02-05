@@ -14,6 +14,8 @@ To be implemented:
 
 ---------------
 Changelog
+1.6
+- Correction of the distortion of trams running through under the entry
 1.5
 - Added the option to have central tracks or not
 1.4
@@ -50,6 +52,8 @@ Caractéristiques:
 
 ---------------
 Changelog
+1.6
+- Correction de déformation des trams lors son passage sous l'entrée
 1.5
 - Ajoute d'option pour voies centrale
 1.4
@@ -85,6 +89,8 @@ local desc_zh = [[一种非常节约用地的高架车站
 
 ---------------
 Changelog
+1.6
+- 修正了有轨电车从入口下通过时的渲染错误
 1.5
 - 增加了中央轨道的选项
 1.4
@@ -109,6 +115,8 @@ function data()
         fr = {
             ["name"] = "Gare surélévée",
             ["desc"] = desc_fr,
+            ["Elevated Train Station"] = "Gare surélévée",
+            ["An elevated train station"] = "Une gare surélévée",
             ["Number of tracks"] = "Nombre de voies",
             ["Always tracks in the middle"] = "Voies au centre",
             ["Platform length"] = "Longeur de plateforms",
@@ -123,6 +131,8 @@ function data()
         zh_CN = {
             ["name"] = "高架车站",
             ["desc"] = desc_zh,
+            ["Elevated Train Station"] = "高架车站",
+            ["An elevated train station"] = "一座高架车站",
             ["Number of tracks"] = "轨道数量",
             ["Always tracks in the middle"] = "轨道位于中央",
             ["Platform length"] = "站台长度",
