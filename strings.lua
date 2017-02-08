@@ -14,6 +14,9 @@ To be implemented:
 
 ---------------
 Changelog
+1.7
+- Correction of crash with central platform with 2 tracks layout.
+- Correction of option "Always tracks in the middle"
 1.6
 - Correction of the distortion of trams running through under the entry
 1.5

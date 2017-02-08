@@ -74,23 +74,26 @@ local function makeStreet(n, tramTrack)
                 type = "new_small.lua",
                 tramTrackType = tramTrack
             },
-            edges =
-            {
-                {{5 + l * 0.5, 0, 0}, {-l * 0.5, 0, 0}},
-                {{5, 0, 0}, {-l * 0.5, 0, 0}},
-                {{5, 0, 0}, {-15, 0, 0}},
-                {{-10, 0, 0}, {-15, 0, 0}},
-                {{-10, 0, 0}, {-20, 0, 0}},
-                {{-30, 0, 0}, {-20, 0, 0}},
-
-                {{5 + l * 0.5, 0, 0}, {l * 0.5, 0, 0}},
-                {{l + 5, 0, 0}, {l * 0.5, 0, 0}},
-                {{l + 5, 0, 0}, {15, 0, 0}},
-                {{l + 20, 0, 0}, {15, 0, 0}},
-                {{l + 20, 0, 0}, {20, 0, 0}},
-                {{l + 40, 0, 0}, {20, 0, 0}},
-            },
-            snapNodes = {5, 11}
+            edges = func.flatten({
+                {
+                    {{5, 0, 0}, {-15, 0, 0}},
+                    {{-10, 0, 0}, {-15, 0, 0}},
+                    {{-10, 0, 0}, {-20, 0, 0}},
+                    {{-30, 0, 0}, {-20, 0, 0}},
+                    
+                    {{l + 5, 0, 0}, {15, 0, 0}},
+                    {{l + 20, 0, 0}, {15, 0, 0}},
+                    {{l + 20, 0, 0}, {20, 0, 0}},
+                    {{l + 40, 0, 0}, {20, 0, 0}},
+                },
+                (l == 0) and {} or
+                {
+                    {{5, 0, 0}, {l, 0, 0}},
+                    {{l + 5, 0, 0}, {l, 0, 0}},
+                }
+            }
+            ),
+            snapNodes = {3, 7}
         }
     }
 end
@@ -415,8 +418,8 @@ local function updateFn(config)
                     id = 1,
                     nbTracks = nbTracks,
                     baseX = 0,
-                    ignoreFst = ({false, true})[params.centralTracks + 1],
-                    ignoreLst = ({false, true})[params.centralTracks + 1]
+                    ignoreFst = ({true, false})[params.centralTracks + 1],
+                    ignoreLst = ({true, false})[params.centralTracks + 1]
                 }
             }
             
@@ -455,8 +458,8 @@ local function updateFn(config)
             result.edgeLists = func.flatten(
                 {
                     {trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))},
+                    {trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))},
                     makeStreet(#xOffsets + #uOffsets, tramTrack),
-                    {trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))}
                 })
             
             
@@ -464,8 +467,8 @@ local function updateFn(config)
                 func.flatten(
                     {
                         station.makePlatforms(uOffsets, platformPatterns(nSeg), coor.transZ(0.3)),
-                        makeEntry(height, length, #xOffsets + #uOffsets),
                         hasClassicRoofs and station.makePlatforms(uOffsets, roofPatterns(nSeg)) or makeRoof(roofConfig()),
+                        makeEntry(height, length, #xOffsets + #uOffsets),
                     })
             
             result.terminalGroups = station.makeTerminals(xuIndex)
