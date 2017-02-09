@@ -86,6 +86,7 @@ function coor.xyz(x, y, z)
     })
     result.length = function() return math.sqrt(result.x * result.x + result.y * result.y + result.z * result.z) end
     result.normalized = function() return result / result.length() end
+    result.toTuple = function() return {result.x, result.y, result.z} end
     return result
 end
 
@@ -105,7 +106,7 @@ function coor.edge2Vec(edge)
 end
 
 function coor.vec2Edge(pt, vec)
-    return {coor.vec2Tuple(pt), coor.vec2Tuple(vec)}
+    return {pt.toTuple(), vec.toTuple()}
 end
 
 -- the original transf.mul is ill-formed. The matrix is in form of Y = X.A + b, but mul transposed the matrix for Y = A.X + b
@@ -296,7 +297,7 @@ function coor.mul(...)
     local params = {...}
     local m = params[1]
     for i = 2, #params do
-        m = mul(m, params[i])
+        m = m * params[i]
     end
     return m
 end
@@ -308,15 +309,11 @@ function coor.apply(vec, trans)
     return coor.xyz(applyVal(1), applyVal(2), applyVal(3))
 end
 
-function coor.applyM(vec, ...)
-    return coor.apply(vec, coor.mul(...))
-end
-
 function coor.applyEdge(mpt, mvec)
     return function(edge)
         local pt, vec = coor.edge2Vec(edge)
-        local newPt = coor.applyM(pt, mpt)
-        local newVec = coor.applyM(vec, mvec)
+        local newPt = coor.apply(pt, mpt)
+        local newVec = coor.apply(vec, mvec)
         return coor.vec2Edge(newPt, newVec)
     end
 end
@@ -337,22 +334,10 @@ function coor.translateAndBack(center)
 end
 
 
-function coor.rotYCentered(rad, center)
+function coor.centered(op, rad, center)
     local mt0, mt1 = coor.translateAndBack(center)
-    local mtr = coor.rotY(rad)
-    return coor.mul(mt0, mtr, mt1)
-end
-
-function coor.rotXCentered(rad, center)
-    local mt0, mt1 = coor.translateAndBack(center)
-    local mtr = coor.rotX(rad)
-    return coor.mul(mt0, mtr, mt1)
-end
-
-function coor.rotZCentered(rad, center)
-    local mt0, mt1 = coor.translateAndBack(center)
-    local mtr = coor.rotZ(rad)
-    return coor.mul(mt0, mtr, mt1)
+    local mtr = op(rad)
+    return mt0 * mtr * mt1
 end
 
 function coor.rotateEdgeByZ(degree, center, edge)
@@ -370,7 +355,7 @@ end
 function coor.setHeight(height, edge)
     local mz = coor.transZ(height)
     local pt, vec = coor.edge2Vec(edge)
-    local newPt = coor.applyM(pt, mz)
+    local newPt = coor.apply(pt, mz)
     return coor.vec2Edge(newPt, vec)
 end
 
