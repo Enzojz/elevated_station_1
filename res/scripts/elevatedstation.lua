@@ -1,6 +1,5 @@
 local laneutil = require "laneutil"
 local paramsutil = require "paramsutil"
-local vec2 = require "vec2"
 local func = require "func"
 local coor = require "coor"
 local line = require "coorline"
@@ -36,9 +35,9 @@ local function params()
         paramsutil.makeTrackTypeParam(),
         paramsutil.makeTrackCatenaryParam(),
         {
-            key = "centralTracks",
-            name = _("Always tracks in the middle"),
-            values = {_("No"), _("Yes")},
+            key = "trackLayout",
+            name = _("Track Layout"),
+            values = func.map({1, 2, 3, 4}, tostring),
             defaultIndex = 0
         },
         {
@@ -116,9 +115,9 @@ local function makeEntry(height, length, n)
 end
 
 local function makeRoof(config)
-    local oTop = {x = 0, y = 12.5}
-    local oLeft = {x = -config.halfWidth, y = 0}
-    local oRight = {x = config.halfWidth, y = 0}
+    local oTop = coor.xy(0, 12.5)
+    local oLeft = coor.xy(-config.halfWidth, 0)
+    local oRight = coor.xy(config.halfWidth, 0)
     local rad90 = math.pi * 0.5
     local f = 0.75
     
@@ -137,8 +136,8 @@ local function makeRoof(config)
     
     tubeLimit = {
         top = {
-            left = line.intersection(line.byRadPt(frad.top(config.baseRadMax), oTop), line.byRadPt(frad.left(config.baseRadMax), oLeft)).x,
-            right = line.intersection(line.byRadPt(frad.top(config.baseRadMax), oTop), line.byRadPt(frad.right(config.baseRadMax), oRight)).x,
+            left = (line.byRadPt(frad.top(config.baseRadMax), oTop) ^ line.byRadPt(frad.left(config.baseRadMax), oLeft)).x,
+            right = (line.byRadPt(frad.top(config.baseRadMax), oTop) ^ line.byRadPt(frad.right(config.baseRadMax), oRight)).x,
         }
     }
     
@@ -146,8 +145,8 @@ local function makeRoof(config)
         local function makeLines(rad, o)
             return {
                 center = line.byRadPt(rad, o),
-                outer = line.byRadPt(rad, vec2.add(o, {y = f * math.cos(rad), x = -f * math.sin(rad)})),
-                inner = line.byRadPt(rad, vec2.add(o, {y = -f * math.cos(rad), x = f * math.sin(rad)})),
+                outer = line.byRadPt(rad, o + coor.xy(-f * math.sin(rad), f * math.cos(rad))),
+                inner = line.byRadPt(rad, o + coor.xy(f * math.sin(rad), -f * math.cos(rad))),
             }
         end
         
@@ -177,34 +176,34 @@ local function makeRoof(config)
         
         lines.right.outer, lines.right.inner = lines.right.inner, lines.right.outer
         
-        pts.top.c.left = line.intersection(lines.top.center, lines.left.center)
-        pts.top.c.right = line.intersection(lines.top.center, lines.right.center)
+        pts.top.c.left = lines.top.center ^ lines.left.center
+        pts.top.c.right = lines.top.center ^ lines.right.center
         
         local m = 0.75 * config.height / 15
-        pts.right.center.bottom = vec2.add(vec2.mul(m, vec2.sub(oRight, pts.top.c.right)), oRight)
+        pts.right.center.bottom = (oRight - pts.top.c.right) * m + oRight
         local lbtm = line.byRadPt(0, pts.right.center.bottom)
-        local lbtm2 = line.byRadPt(0, vec2.add(pts.right.center.bottom, {x = 0, y = 1}))
-        pts.left.center.bottom = line.intersection(lbtm, lines.left.center)
+        local lbtm2 = line.byRadPt(0, pts.right.center.bottom + coor.xy(0, 1))
+        pts.left.center.bottom = lbtm ^ lines.left.center
         
-        pts.top.inner.left = line.intersection(lines.top.inner, lines.left.inner)
-        pts.top.inner.right = line.intersection(lines.top.inner, lines.right.inner)
+        pts.top.inner.left = lines.top.inner ^ lines.left.inner
+        pts.top.inner.right = lines.top.inner ^ lines.right.inner
         
         lines.top.orth = {}
         lines.top.orth.left = line.byRadPt(rads.top + rad90, pts.top.inner.left)
         lines.top.orth.right = line.byRadPt(rads.top + rad90, pts.top.inner.right)
         
         function make(side)
-            pts.top.center[side] = line.intersection(lines.top.center, lines.top.orth[side])
-            pts.top.outer[side] = line.intersection(lines.top.outer, lines.top.orth[side])
-            pts.top.vert[side] = vec2.mul(0.5, vec2.add(line.intersection(lines.top.center, lines.vert[side]), line.intersection(lines.top.inner, lines.vert[side])))
+            pts.top.center[side] = lines.top.center ^ lines.top.orth[side]
+            pts.top.outer[side] = lines.top.outer ^ lines.top.orth[side]
+            pts.top.vert[side] = ((lines.top.center ^ lines.vert[side]) + (lines.top.inner ^ lines.vert[side])) * 0.5
             pts[side].inner.top = pts.top.inner[side]
             lines[side].orth = line.byRadPt(rads[side] + rad90, pts[side].inner.top)
-            pts[side].center.top = line.intersection(lines[side].orth, lines[side].center)
-            pts[side].outer.top = line.intersection(lines[side].outer, lines[side].orth)
-            pts[side].outer.bottom = line.intersection(lines[side].outer, lbtm)
-            pts[side].center.bottomFrame = line.intersection(lines[side].center, lbtm2)
-            pts[side].apex = line.intersection(lines[side].outer, lines.top.outer)
-            pts[side].hori = vec2.mul(0.5, vec2.add(line.intersection(lines[side].center, lines.hori), line.intersection(lines[side].inner, lines.hori)))
+            pts[side].center.top = lines[side].orth ^ lines[side].center
+            pts[side].outer.top = lines[side].outer ^ lines[side].orth
+            pts[side].outer.bottom = lines[side].outer ^ lbtm
+            pts[side].center.bottomFrame = lines[side].center ^ lbtm2
+            pts[side].apex = lines[side].outer ^ lines.top.outer
+            pts[side].hori = ((lines[side].center ^ lines.hori) + (lines[side].inner ^ lines.hori)) * 0.5
         end
         make("left")
         make("right")
@@ -213,14 +212,14 @@ local function makeRoof(config)
     
     local function transformRoof(pts)
         local pt0, pt1 = table.unpack(pts)
-        local o = coor.nmul(0.5, coor.add(pt0, pt1))
-        local vec = coor.sub(pt0, pt1)
-        local length = coor.length(vec)
+        local o = (pt0 + pt1) * 0.5
+        local vec = pt0 - pt1
+        local length = vec.length()
         local rad = (vec.z > 0 and 1 or -1) * math.acos(vec.x / length)
         return o, length, rad
     end
     
-    local function vec2vec3(y) return function(pt) return {x = pt.x, y = y, z = pt.y} end end
+    local function vec2vec3(y) return function(pt) return coor.xyz(pt.x, y, pt.y) end end
     
     local function mFrame(params)
         local pts, y = table.unpack(params)
@@ -254,13 +253,13 @@ local function makeRoof(config)
     
     local function mAngles(params)
         local pts, y = table.unpack(params)
-        local function rad(v) return (v.y > 0 and 1 or -1) * math.acos(v.x / vec2.length(v)) end
-        local function distVec(apex, outer) return vec2.normalize(vec2.sub(apex, outer)), vec2.distance(apex, outer) end
+        local function rad(v) return (v.y > 0 and 1 or -1) * math.acos(v.x / v.length()) end
+        local function distVec(apex, outer) return (apex - outer).normalized(), (apex % outer) end
         
         local function makeAngle(o, apex, cw, ccw)
             local vecCW, distCW = distVec(apex, ccw)
             local vecCCW, distCCW = distVec(apex, cw)
-            local mPos = coor.trans({x = config.oX + o.x, y = y, z = config.height + o.y})
+            local mPos = coor.trans(coor.xyz(config.oX + o.x, y, config.height + o.y))
             return {
                 coor.mul(coor.scaleX(-distCW), coor.rotY(rad(vecCW)), mPos),
                 coor.mul(coor.scaleX(distCCW), coor.rotY(rad(vecCCW) - math.pi), mPos)}
@@ -291,18 +290,18 @@ local function makeRoof(config)
     
     local function mEntryExtreme(params)
         local o, length, rad = transformEntry(params)
-        o = coor.add(o, coor.nmul(length + 1, {x = -math.cos(rad), y = 0, z = -math.sin(rad)}))
+        o = coor.xyz(-math.cos(rad), 0, -math.sin(rad)) * (length + 1) + o
         return coor.mul(coor.scaleX(2), coor.rotY(rad), coor.trans(o), coor.transZ(config.height), coor.transX(config.oX))
     end
     
     local function transformTube(pts)
         local pt0, pt1 = table.unpack(pts)
-        local o = coor.nmul(0.5, coor.add(pt0, pt1))
-        local vec = coor.sub(pt0, pt1)
-        local length = coor.length(vec)
+        local o = (pt0 + pt1) * 0.5
+        local vec = pt0 - pt1
+        local length = vec.length()
         local radX = (vec.z > 0 and -1 or 1) * math.acos(vec.y / math.sqrt(vec.z * vec.z + vec.y * vec.y))
         local radZ = (vec.x > 0 and -1 or 1) * math.acos(vec.y / math.sqrt(vec.x * vec.x + vec.y * vec.y))
-        return coor.mul(coor.scaleY(length), coor.rotX(radX), coor.rotZ(radZ), coor.trans(o), coor.transZ(config.height), coor.transX(config.oX))
+        return coor.scaleY(length) * coor.rotX(radX) * coor.rotZ(radZ) * coor.trans(o) * coor.transZ(config.height) * coor.transX(config.oX)
     end
     
     local function mRoofTubes(params)
@@ -313,8 +312,8 @@ local function makeRoof(config)
                 {lPts.top.vert.right, rPts.top.vert.right},
                 {lPts.left.hori, rPts.left.hori},
                 {lPts.right.hori, rPts.right.hori},
-                {vec2.mul(0.5, vec2.add(lPts.top.c.left, lPts.top.inner.left)), vec2.mul(0.5, vec2.add(rPts.top.c.left, rPts.top.inner.left))},
-                {vec2.mul(0.5, vec2.add(lPts.top.c.right, lPts.top.inner.right)), vec2.mul(0.5, vec2.add(rPts.top.c.right, rPts.top.inner.right))},
+                {(lPts.top.c.left + lPts.top.inner.left) * 0.5, (rPts.top.c.left + rPts.top.inner.left) * 0.5},
+                {(lPts.top.c.right + lPts.top.inner.right) * 0.5, (rPts.top.c.right + rPts.top.inner.right) * 0.5},
             }, function(pts) return {vec2vec3(y)(pts[1]), vec2vec3(y + config.span)(pts[2])} end)
             , transformTube)
     end
@@ -323,9 +322,9 @@ local function makeRoof(config)
         local oL, lengthL, radL = transformEntry(params[1])
         local oR, lengthR, radR = transformEntry(params[2])
         
-        oL = coor.add(oL, coor.nmul(lengthL + 1, {x = -math.cos(radL), y = 0, z = -math.sin(radL)}))
-        oR = coor.add(oR, coor.nmul(lengthR + 1, {x = -math.cos(radR), y = 0, z = -math.sin(radR)}))
-        return coor.mul(transformTube({oL, oR}), coor.transZ(0.75))
+        oL = coor.xyz(-math.cos(radL), 0, -math.sin(radL)) * (lengthL + 1) + oL
+        oR = coor.xyz(-math.cos(radR), 0, -math.sin(radR)) * (lengthR + 1) + oR
+        return transformTube({oL, oR}) * coor.transZ(0.75)
     end
     
     local function phase(y) return y * 4 * rad90 / config.framesPerCycle end
@@ -371,7 +370,7 @@ local function defaultParams(params)
     params.roofLength = params.roofLength or 3
     params.roofStyle = params.roofStyle or 0
     params.tramTrack = params.tramTrack or 0
-    params.centralTracks = params.centralTracks or 0
+    params.trackLayout = params.trackLayout or 0
 end
 
 local function updateFn(config)
@@ -406,9 +405,6 @@ local function updateFn(config)
             local height = heightList[params.platformHeight + 1]
             local hasClassicRoofs = params.roofStyle == 2
             local tramTrack = ({"NO", "YES", "ELECTRIC"})[params.tramTrack + 1]
-            local keepCenTracks = params.centralTracks == 1
-            
-            
             
             local levels = {
                 {
@@ -418,8 +414,8 @@ local function updateFn(config)
                     id = 1,
                     nbTracks = nbTracks,
                     baseX = 0,
-                    ignoreFst = ({true, false})[params.centralTracks + 1],
-                    ignoreLst = ({true, false})[params.centralTracks + 1]
+                    ignoreFst = ({true, false, true, false})[params.trackLayout + 1],
+                    ignoreLst = (nbTracks % 2 == 0 and {false, false, true, true} or {true, true, false, false})[params.trackLayout + 1],
                 }
             }
             
