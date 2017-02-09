@@ -26,8 +26,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --]]
 local laneutil = require "laneutil"
-local vec3 = require "vec3"
-local transf = require "transf"
 
 local coor = {}
 coor.make = laneutil.makeLanes

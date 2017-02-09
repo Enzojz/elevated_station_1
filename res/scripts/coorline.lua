@@ -1,5 +1,4 @@
 local coor = require "coor"
-
 local line = {}
 
 
@@ -9,7 +8,9 @@ local line = {}
 -- a.x + b.y + 0 = 0;
 function line.new(a, b, c)
     local result = {a = a, b = b, c = c}
-    setmetatable(result, {
+    result.vector = line.vec
+    setmetatable(result, 
+    {
         __sub = line.intersection
     })
     return result
@@ -32,7 +33,7 @@ function line.byRadPt(rad, pt)
 end
 
 function line.vec(l)
-    return coor.xy(-l.b, l.a)
+    return coor.xy(-l.b, l.a):normalized()
 end
 
 function line.intersection(l1, l2)
