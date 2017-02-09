@@ -171,7 +171,7 @@ end
 
 stationlib.faceMapper = function(m)
     return function(face)
-        return func.map(face, function(pt) return (coor.tuple2Vec(pt) .. m).toTuple() end)
+        return func.map(face, function(pt) return (coor.tuple2Vec(pt) .. m):toTuple() end)
     end
 end
 

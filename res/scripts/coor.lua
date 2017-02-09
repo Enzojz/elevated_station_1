@@ -32,61 +32,72 @@ local transf = require "transf"
 local coor = {}
 coor.make = laneutil.makeLanes
 
+local vecXyMeta = {
+    __add = function(lhs, rhs)
+        return coor.xy(lhs.x + rhs.x, lhs.y + rhs.y)
+    end
+    ,
+    __sub = function(lhs, rhs)
+        return coor.xy(lhs.x - rhs.x, lhs.y - rhs.y)
+    end
+    ,
+    __mul = function(lhs, rhs)
+        return coor.xy(lhs.x * rhs, lhs.y * rhs)
+    end,
+    __div = function(lhs, rhs)
+        return coor.xy(lhs.x / rhs, lhs.y / rhs)
+    end,
+    __mod = function(lhs, rhs)
+        return (lhs - rhs):length()
+    end
+}
+
+local vecXyLength = function(self) return math.sqrt(self.x * self.x + self.y * self.y) end
+local vecXyNormalized = function(self) return self / self:length() end
+
 function coor.xy(x, y)
     local result = {x = x, y = y}
-    setmetatable(result, {
-        __add = function(lhs, rhs)
-            return coor.xy(lhs.x + rhs.x, lhs.y + rhs.y)
-        end
-        ,
-        __sub = function(lhs, rhs)
-            return coor.xy(lhs.x - rhs.x, lhs.y - rhs.y)
-        end
-        ,
-        __mul = function(lhs, rhs)
-            return coor.xy(lhs.x * rhs, lhs.y * rhs)
-        end,
-        __div = function(lhs, rhs)
-            return coor.xy(lhs.x / rhs, lhs.y / rhs)
-        end,
-        __mod = function(lhs, rhs)
-            return (lhs - rhs).length()
-        end
-    })
-
-    result.length = function() return math.sqrt(result.x * result.x + result.y * result.y) end
-    result.normalized = function() return result / result.length() end
-
+    setmetatable(result, vecXyMeta)
+    
+    result.length = vecXyLength
+    result.normalized = vecXyNormalized
+    
     return result
 end
 
+local vecXyzMeta = {
+    __add = function(lhs, rhs)
+        return coor.xyz(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
+    end
+    ,
+    __sub = function(lhs, rhs)
+        return coor.xyz(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z)
+    end
+    ,
+    __mul = function(lhs, rhs)
+        return coor.xyz(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs)
+    end,
+    __div = function(lhs, rhs)
+        return coor.xyz(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs)
+    end,
+    __concat = function(lhs, rhs)
+        return coor.apply(lhs, rhs)
+    end,
+    __mod = function(lhs, rhs)
+        return (lhs - rhs).length()
+    end
+}
+
+local vecXyzLength = function(self) return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z) end
+local vecXyzNormalized  = function(self) return self / self:length() end
+local vecXyzToTuple  = function(self) return {self.x, self.y, self.z} end
+
 function coor.xyz(x, y, z)
     local result = {x = x, y = y, z = z}
-    setmetatable(result, {
-        __add = function(lhs, rhs)
-            return coor.xyz(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
-        end
-        ,
-        __sub = function(lhs, rhs)
-            return coor.xyz(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z)
-        end
-        ,
-        __mul = function(lhs, rhs)
-            return coor.xyz(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs)
-        end,
-        __div = function(lhs, rhs)
-            return coor.xyz(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs)
-        end,
-        __concat = function(lhs, rhs)
-            return coor.apply(lhs, rhs)
-        end,
-        __mod = function(lhs, rhs)
-            return (lhs - rhs).length()
-        end
-    })
-    result.length = function() return math.sqrt(result.x * result.x + result.y * result.y + result.z * result.z) end
-    result.normalized = function() return result / result.length() end
-    result.toTuple = function() return {result.x, result.y, result.z} end
+    setmetatable(result, vecXyzMeta)
+    result.length = vecXyzLength
+    result.normalized = vecXyzNormalized
+    result.toTuple = vecXyzToTuple
     return result
 end
 
@@ -106,7 +117,7 @@ function coor.edge2Vec(edge)
 end
 
 function coor.vec2Edge(pt, vec)
-    return {pt.toTuple(), vec.toTuple()}
+    return {pt:toTuple(), vec:toTuple()}
 end
 
 -- the original transf.mul is ill-formed. The matrix is in form of Y = X.A + b, but mul transposed the matrix for Y = A.X + b

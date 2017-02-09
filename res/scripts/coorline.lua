@@ -10,9 +10,7 @@ local line = {}
 function line.new(a, b, c)
     local result = {a = a, b = b, c = c}
     setmetatable(result, {
-        __pow = function(lhs, rhs)
-            return line.intersection(lhs, rhs)
-        end
+        __sub = line.intersection
     })
     return result
 end

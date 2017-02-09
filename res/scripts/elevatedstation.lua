@@ -136,8 +136,8 @@ local function makeRoof(config)
     
     tubeLimit = {
         top = {
-            left = (line.byRadPt(frad.top(config.baseRadMax), oTop) ^ line.byRadPt(frad.left(config.baseRadMax), oLeft)).x,
-            right = (line.byRadPt(frad.top(config.baseRadMax), oTop) ^ line.byRadPt(frad.right(config.baseRadMax), oRight)).x,
+            left = (line.byRadPt(frad.top(config.baseRadMax), oTop) - line.byRadPt(frad.left(config.baseRadMax), oLeft)).x,
+            right = (line.byRadPt(frad.top(config.baseRadMax), oTop) - line.byRadPt(frad.right(config.baseRadMax), oRight)).x,
         }
     }
     
@@ -176,34 +176,34 @@ local function makeRoof(config)
         
         lines.right.outer, lines.right.inner = lines.right.inner, lines.right.outer
         
-        pts.top.c.left = lines.top.center ^ lines.left.center
-        pts.top.c.right = lines.top.center ^ lines.right.center
+        pts.top.c.left = lines.top.center - lines.left.center
+        pts.top.c.right = lines.top.center - lines.right.center
         
         local m = 0.75 * config.height / 15
         pts.right.center.bottom = (oRight - pts.top.c.right) * m + oRight
         local lbtm = line.byRadPt(0, pts.right.center.bottom)
         local lbtm2 = line.byRadPt(0, pts.right.center.bottom + coor.xy(0, 1))
-        pts.left.center.bottom = lbtm ^ lines.left.center
+        pts.left.center.bottom = lbtm - lines.left.center
         
-        pts.top.inner.left = lines.top.inner ^ lines.left.inner
-        pts.top.inner.right = lines.top.inner ^ lines.right.inner
+        pts.top.inner.left = lines.top.inner - lines.left.inner
+        pts.top.inner.right = lines.top.inner - lines.right.inner
         
         lines.top.orth = {}
         lines.top.orth.left = line.byRadPt(rads.top + rad90, pts.top.inner.left)
         lines.top.orth.right = line.byRadPt(rads.top + rad90, pts.top.inner.right)
         
         function make(side)
-            pts.top.center[side] = lines.top.center ^ lines.top.orth[side]
-            pts.top.outer[side] = lines.top.outer ^ lines.top.orth[side]
-            pts.top.vert[side] = ((lines.top.center ^ lines.vert[side]) + (lines.top.inner ^ lines.vert[side])) * 0.5
+            pts.top.center[side] = lines.top.center - lines.top.orth[side]
+            pts.top.outer[side] = lines.top.outer - lines.top.orth[side]
+            pts.top.vert[side] = ((lines.top.center - lines.vert[side]) + (lines.top.inner - lines.vert[side])) * 0.5
             pts[side].inner.top = pts.top.inner[side]
             lines[side].orth = line.byRadPt(rads[side] + rad90, pts[side].inner.top)
-            pts[side].center.top = lines[side].orth ^ lines[side].center
-            pts[side].outer.top = lines[side].outer ^ lines[side].orth
-            pts[side].outer.bottom = lines[side].outer ^ lbtm
-            pts[side].center.bottomFrame = lines[side].center ^ lbtm2
-            pts[side].apex = lines[side].outer ^ lines.top.outer
-            pts[side].hori = ((lines[side].center ^ lines.hori) + (lines[side].inner ^ lines.hori)) * 0.5
+            pts[side].center.top = lines[side].orth - lines[side].center
+            pts[side].outer.top = lines[side].outer - lines[side].orth
+            pts[side].outer.bottom = lines[side].outer - lbtm
+            pts[side].center.bottomFrame = lines[side].center - lbtm2
+            pts[side].apex = lines[side].outer - lines.top.outer
+            pts[side].hori = ((lines[side].center - lines.hori) + (lines[side].inner - lines.hori)) * 0.5
         end
         make("left")
         make("right")
@@ -214,7 +214,7 @@ local function makeRoof(config)
         local pt0, pt1 = table.unpack(pts)
         local o = (pt0 + pt1) * 0.5
         local vec = pt0 - pt1
-        local length = vec.length()
+        local length = vec:length()
         local rad = (vec.z > 0 and 1 or -1) * math.acos(vec.x / length)
         return o, length, rad
     end
@@ -253,8 +253,8 @@ local function makeRoof(config)
     
     local function mAngles(params)
         local pts, y = table.unpack(params)
-        local function rad(v) return (v.y > 0 and 1 or -1) * math.acos(v.x / v.length()) end
-        local function distVec(apex, outer) return (apex - outer).normalized(), (apex % outer) end
+        local function rad(v) return (v.y > 0 and 1 or -1) * math.acos(v.x / v:length()) end
+        local function distVec(apex, outer) return (apex - outer):normalized(), (apex % outer) end
         
         local function makeAngle(o, apex, cw, ccw)
             local vecCW, distCW = distVec(apex, ccw)
@@ -298,7 +298,7 @@ local function makeRoof(config)
         local pt0, pt1 = table.unpack(pts)
         local o = (pt0 + pt1) * 0.5
         local vec = pt0 - pt1
-        local length = vec.length()
+        local length = vec:length()
         local radX = (vec.z > 0 and -1 or 1) * math.acos(vec.y / math.sqrt(vec.z * vec.z + vec.y * vec.y))
         local radZ = (vec.x > 0 and -1 or 1) * math.acos(vec.y / math.sqrt(vec.x * vec.x + vec.y * vec.y))
         return coor.scaleY(length) * coor.rotX(radX) * coor.rotZ(radZ) * coor.trans(o) * coor.transZ(config.height) * coor.transX(config.oX)
