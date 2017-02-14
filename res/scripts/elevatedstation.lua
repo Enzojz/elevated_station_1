@@ -70,7 +70,7 @@ local function makeStreet(n, tramTrack)
             type = "STREET",
             params =
             {
-                type = "new_small.lua",
+                type = "station_new_small.lua",
                 tramTrackType = tramTrack
             },
             edges = func.flatten({

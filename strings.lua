@@ -14,6 +14,8 @@ To be implemented:
 
 ---------------
 Changelog
+1.8
+- Changed option "Always tracks in the middle" to "Track Layout"
 1.7
 - Correction of crash with central platform with 2 tracks layout.
 - Correction of option "Always tracks in the middle"
@@ -55,6 +57,11 @@ Caractéristiques:
 
 ---------------
 Changelog
+1.8
+- Changement "Toujours voie en centre" vers "Disposition de voie"
+1.7
+- Correction de plantage avec plateforme centrale en 2 voies.
+- Correction d'option "Toujours voie en centre"
 1.6
 - Correction de déformation des trams lors son passage sous l'entrée
 1.5
@@ -92,6 +99,11 @@ local desc_zh = [[一种非常节约用地的高架车站
 
 ---------------
 Changelog
+1.8
+- 将“中央轨道”选项改为了“轨道布局”
+1.7
+- 修正了两股道中央站台时的退出错误
+- 修正了“中央股道”的错误
 1.6
 - 修正了有轨电车从入口下通过时的渲染错误
 1.5

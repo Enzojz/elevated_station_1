@@ -82,7 +82,7 @@ local vecXyzMeta = {
         return coor.apply(lhs, rhs)
     end,
     __mod = function(lhs, rhs)
-        return (lhs - rhs).length()
+        return (lhs - rhs):length()
     end
 }
 

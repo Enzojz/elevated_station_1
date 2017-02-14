@@ -95,13 +95,15 @@ function func.bind(fun, ...)
     local rest = {...}
     return function(...)
         local param = {...}
+        local args = {}
         for i = 1, #rest do
             if (rest[i] == nil and #param > 0) then
-                rest[i] = table.remove(param, 1)
+                table.insert(args, table.remove(param, 1))
+            else
+                table.insert(args, rest[i])
             end
         end
-        local args = func.concat(rest, param)
-        return fun(table.unpack(args))
+        return fun(table.unpack(func.concat(args, param)))
     end
 end
 
