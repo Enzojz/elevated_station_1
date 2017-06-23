@@ -1,4 +1,4 @@
-local coor = require "coor"
+local coor = require "elevatedstation/coor"
 local line = {}
 
 
@@ -7,11 +7,12 @@ local line = {}
 -- if not
 -- a.x + b.y + 0 = 0;
 function line.new(a, b, c)
-    local result = {a = a, b = b, c = c}
+    local result = c ~= 0 and {a = a/c, b = b/c, c = 1} or {a = a, b = b, c = 0}
     result.vector = line.vec
     setmetatable(result, 
     {
-        __sub = line.intersection
+        __sub = line.intersection,
+        __div = function(lhs, rhs) return rhs / lhs end
     })
     return result
 end
@@ -20,8 +21,7 @@ function line.byVecPt(vec, pt)
     local a = vec.y
     local b = -vec.x
     local c = -(a * pt.x + b * pt.y)
-    
-    return (c ~= 0) and line.new(a / c, b / c, 1) or line.new(a, b, 0)
+    return line.new(a, b, c)
 end
 
 function line.byPtPt(pt1, pt2)

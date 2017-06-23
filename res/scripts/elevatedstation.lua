@@ -1,10 +1,11 @@
 local laneutil = require "laneutil"
 local paramsutil = require "paramsutil"
-local func = require "func"
-local coor = require "coor"
-local line = require "coorline"
-local trackEdge = require "trackedge"
-local station = require "stationlib"
+local func = require "elevatedstation/func"
+local pipe = require "elevatedstation/pipe"
+local coor = require "elevatedstation/coor"
+local line = require "elevatedstation/coorline"
+local trackEdge = require "elevatedstation/trackedge"
+local station = require "elevatedstation/stationlib"
 
 local platformSegments = {2, 4, 8, 12, 16, 20, 24}
 local heightList = {12.5, 15, 17.5, 20}
@@ -264,10 +265,10 @@ local function makeRoof(config)
                 coor.mul(coor.scaleX(-distCW), coor.rotY(rad(vecCW)), mPos),
                 coor.mul(coor.scaleX(distCCW), coor.rotY(rad(vecCCW) - math.pi), mPos)}
         end
-        return func.flatten({
+        return func.concat(
             makeAngle(pts.left.inner.top, pts.left.apex, pts.top.outer.left, pts.left.outer.top),
             makeAngle(pts.right.inner.top, pts.right.apex, pts.right.outer.top, pts.top.outer.right)
-        })
+    )
     end
     
     local function transformEntry(params)
@@ -451,21 +452,15 @@ local function updateFn(config)
                 }
             end
             
-            result.edgeLists = func.flatten(
-                {
-                    {trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))},
-                    {trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))},
-                    makeStreet(#xOffsets + #uOffsets, tramTrack),
-                })
+            result.edgeLists = pipe.new
+                / trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))
+                / trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))
+                + makeStreet(#xOffsets + #uOffsets, tramTrack)
             
-            
-            result.models =
-                func.flatten(
-                    {
-                        station.makePlatforms(uOffsets, platformPatterns(nSeg), coor.transZ(0.3)),
-                        hasClassicRoofs and station.makePlatforms(uOffsets, roofPatterns(nSeg)) or makeRoof(roofConfig()),
-                        makeEntry(height, length, #xOffsets + #uOffsets),
-                    })
+            result.models = pipe.new
+                + station.makePlatforms(uOffsets, platformPatterns(nSeg), coor.transZ(0.3))
+                + (hasClassicRoofs and station.makePlatforms(uOffsets, roofPatterns(nSeg)) or makeRoof(roofConfig()))
+                + makeEntry(height, length, #xOffsets + #uOffsets)
             
             result.terminalGroups = station.makeTerminals(xuIndex)
             

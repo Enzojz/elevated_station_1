@@ -1,6 +1,6 @@
 local laneutil = require "laneutil"
-local coor = require "coor"
-local func = require "func"
+local coor = require "elevatedstation/coor"
+local func = require "elevatedstation/func"
 
 local laneWidth = 2.4
 local laneX = 1.5
