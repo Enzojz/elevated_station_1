@@ -1,45 +1,37 @@
 function data()
-return {
-	boundingInfo = {
-		bbMax = { 4, 3.464, 2.702, },
-		bbMin = { -4, -3.464, -9.901, },
-	},
-	collider = {
-		params = {
-			
-		},
-		type = "MESH",
-	},
-	lods = {
-		{
-			children = {
-				{
-					id = "station/train/passenger/elevated_station/pillar_top.msh",
-					transf = {
-						1.0, 0.0, 0.0, 0.0, 
-						0.0, 1.0, 0.0, 0.0, 
-						0.0, 0.0, 1.0, 0.0, 
-						0.0, 0.0, 0.0, 1.0, 
-					},
-					type = "MESH",
-				}, 
-			},
-			matConfigs = {
-				{ 0, }, 
-			},
-			static = false,
-			visibleFrom = 0,
-			visibleTo = 2500,
-		}, 
-	},
-	metadata = {
-		availability = {
-			yearFrom = 0,
-			yearTo = 0,
-		},
-		cost = {
-			price = 0,
-		},
-	},
-}
+    return {
+        boundingInfo = {
+            bbMax = { 4, 3.464, 2.702 },
+            bbMin = { -4, -3.464, -9.901 }
+        },
+        collider = {
+            params = {  },
+            type = "MESH"
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "station/train/passenger/elevated_station/concrete.mtl"
+                            },
+                            mesh = "station/train/passenger/elevated_station/pillar_top.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
+                        }
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
+                },
+                static = true,
+                visibleFrom = 0,
+                visibleTo = 2500
+            }
+        },
+        metadata = {
+            availability = { yearFrom = 0, yearTo = 0 },
+            cost = { price = 0 }
+        },
+        version = 1
+    }
 end

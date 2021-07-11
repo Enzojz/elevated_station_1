@@ -1,29 +1,36 @@
 function data()
-return {
-	params = {
-		fade_out_range = {
-			fadeOutEndDist = 20000,
-			fadeOutStartDist = 10000,
-		},
-		map_color_alpha = {
-			compressionAllowed = true,
-			fileName = "models/transparent.tga",
-			magFilter = "LINEAR",
-			minFilter = "LINEAR_MIPMAP_LINEAR",
-			mipmapAlphaScale = 0,
-			type = "TWOD",
-			wrapS = "REPEAT",
-			wrapT = "REPEAT",
-		},
-		props = {
-			coeffs = {
-				1, 1, 0.25, 20, 
+	return {
+		params = {
+			alpha_scale = {
+				alphaScale = 1,
 			},
+			alpha_test = {
+				alphaThreshold = 0.5,
+				cutout = true,
+			},
+			fade_out_range = {
+				fadeOutEndDist = 20000,
+				fadeOutStartDist = 10000,
+			},
+			map_albedo_opacity = {
+				fileName = "models/transparent.tga",
+				type = "TWOD",
+				wrapS = "REPEAT",
+				wrapT = "REPEAT",
+			},
+			map_metal_gloss_ao = {
+				fileName = "default_metal_gloss_ao.tga",
+				type = "TWOD",
+			},
+			polygon_offset = {
+				factor = 0,
+				units = 0,
+			},
+			two_sided = {
+				flipNormal = false,
+				twoSided = true,
+			}
 		},
-		two_sided = {
-			twoSided = false,
-		},
-	},
-	type = "TRANSPARENT",
-}
-end
+		type = "PHYS_TRANSPARENT",
+	}
+	end

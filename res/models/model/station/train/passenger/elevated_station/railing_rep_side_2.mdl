@@ -1,7 +1,7 @@
 function data() return {
    boundingInfo = {
-      bbMax = { -2.500004, 0.000002, -3.000003 },
-      bbMin = { 2.500005, -3.200002, 3.000004 }
+      bbMax = { -6.177842, 2.612503, -3.000004 },
+      bbMin = { -2.499990, -3.200004, 3.000007 }
    },
    collider = {
       params = {
@@ -30,20 +30,20 @@ function data() return {
                         name = "bridge_bone_6m_start",
                         transf = {
                            0.999997, -0.002388, 0.000000, 0.000000, 
-                           0.002388, 0.999997, 0.000000, 0.000000, 
-                           -0.000000, -0.000000, 1.000000, 0.000000, 
-                           -0.000002, -2.500000, -0.000003, 1.000000, 
+                           0.002388, 0.999997, 0.000001, 0.000000, 
+                           -0.000000, -0.000001, 1.000000, 0.000000, 
+                           -0.000001, -7.000000, -0.000009, 1.000000, 
                         }
                      }
                   },
-                  name = "railing_rep_rep",
-                  skin = "station/train/passenger/elevated_station/railing_rep_rep.msh",
-                  skinMaterials = { "station/train/passenger/elevated_station/concrete_skin.mtl" },
+                  name = "railing_rep_side_2",
+                  skin = "station/train/passenger/elevated_station/railing_rep_side_2.msh",
+                  skinMaterials = { "station/train/passenger/elevated_station/concrete_skin.mtl", "station/train/passenger/elevated_station/fence_skin.mtl" },
                   transf = {
-                     1.000000, 0.000001, -0.000000, 0.000000, 
-                     -0.000001, 1.000000, -0.000001, 0.000000, 
+                     1.000000, 0.000000, -0.000000, 0.000000, 
+                     -0.000000, 1.000000, -0.000001, 0.000000, 
                      0.000000, 0.000001, 1.000000, 0.000000, 
-                     0.000000, -0.000000, 0.000000, 1.000000, 
+                     0.000000, 4.500000, -0.000000, 1.000000, 
                   }
                }
             },

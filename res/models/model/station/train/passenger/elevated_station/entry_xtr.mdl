@@ -1,38 +1,32 @@
 function data()
     return {
         collider = {
-            params = {
-            
-            },
-            type = "MESH",
+            params = {  },
+            type = "MESH"
         },
         lods = {
             {
-                children = {
-                    {
-                        id = "station/train/passenger/elevated_station/entry_xtr.msh",
-                        transf = {
-                            1, 0, 0, 0,
-                            0, 0.3, 0, 0,
-                            0, 0, 1.5, 0,
-                            0, 0, 0, 1
-                        },
-                        type = "MESH",
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "station/train/passenger/elevated_station/frame.mtl"
+                            },
+                            mesh = "station/train/passenger/elevated_station/entry_xtr.msh",
+                            transf = { 1, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 1 }
+                        }
                     },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
                 },
-                matConfigs = {
-                    {0, },
-                },
-                static = false,
+                static = true,
                 visibleFrom = 0,
-                visibleTo = 500,
-            },
+                visibleTo = 500
+            }
         },
         metadata = {
-            cost = {
-                price = 0,
-            },
+            cost = { price = 0 }
         },
-    
+        version = 1
     }
 end

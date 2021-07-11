@@ -2,31 +2,27 @@ function data()
     return {
         lods = {
             {
-                children = {
-                    {
-                        id = "station/train/passenger/elevated_station/frame.msh",
-                        transf = {
-                            1, 0, 0, 0,
-                            0, 0.3, 0, 0,
-                            0, 0, 1.5, 0,
-                            0, 0, 0, 1
-                        },
-                        type = "MESH",
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "station/train/passenger/elevated_station/frame.mtl"
+                            },
+                            mesh = "station/train/passenger/elevated_station/frame.msh",
+                            transf = { 1, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 1 }
+                        }
                     },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
                 },
-                matConfigs = {
-                    {0, },
-                },
-                static = false,
+                static = true,
                 visibleFrom = 0,
-                visibleTo = 5000,
-            },
+                visibleTo = 5000
+            }
         },
         metadata = {
-            cost = {
-                price = 0,
-            },
+            cost = { price = 0 }
         },
-    
+        version = 1
     }
 end
