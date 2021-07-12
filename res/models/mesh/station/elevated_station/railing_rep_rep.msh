@@ -21,10 +21,6 @@ function data() return {
             uv0 = {
                count = 96,
                offset = 4120
-            },
-            uv1 = {
-               count = 96,
-               offset = 4216
             }
          }
       }
@@ -54,11 +50,6 @@ function data() return {
          count = 112,
          numComp = 2,
          offset = 840
-      },
-      uv1 = {
-         count = 2656,
-         numComp = 2,
-         offset = 952
       }
    }
 } end

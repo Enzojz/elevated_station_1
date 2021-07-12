@@ -67,8 +67,8 @@ function data()
                 local sp = params.railingWidth - (maxOffset - minOffset) - 2
                 
                 local width = maxOffset - minOffset
-                local nPart = math.floor(width / 5)
-                local wPart = width / nPart
+                local nPart = math.floor(width / 5) - 1
+                local wPart = nPart > 0 and width / nPart or 1
                 local yScale = wPart / 5
                 
                 local set = function(n)
@@ -85,8 +85,8 @@ function data()
                     if interval.lanes[#interval.lanes].type ~= 1 and interval.lanes[#interval.lanes].type ~= 3 then
                         table.insert(set,
                             {
-                                id = path .. "railing_rep_side_2.mdl",
-                                transf = {xScale, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, maxOffset + sp, 0, 1}
+                                id = path .. "railing_rep_side_1.mdl",
+                                transf = {-xScale, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, x, maxOffset + sp, 0, 1}
                             })
                     end
                     

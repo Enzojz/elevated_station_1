@@ -4,27 +4,23 @@ function data() return {
          indices = {
             jointWeights = {
                count = 1296,
-               offset = 44940
+               offset = 45092
             },
             normal = {
                count = 1296,
-               offset = 39756
+               offset = 39908
             },
             position = {
                count = 1296,
-               offset = 38460
+               offset = 38612
             },
             tangent = {
                count = 1296,
-               offset = 41052
+               offset = 41204
             },
             uv0 = {
                count = 1296,
-               offset = 42348
-            },
-            uv1 = {
-               count = 1296,
-               offset = 43644
+               offset = 42500
             }
          }
       },
@@ -32,27 +28,23 @@ function data() return {
          indices = {
             jointWeights = {
                count = 2592,
-               offset = 59196
+               offset = 59348
             },
             normal = {
                count = 2592,
-               offset = 48828
+               offset = 48980
             },
             position = {
                count = 2592,
-               offset = 46236
+               offset = 46388
             },
             tangent = {
                count = 2592,
-               offset = 51420
+               offset = 51572
             },
             uv0 = {
                count = 2592,
-               offset = 54012
-            },
-            uv1 = {
-               count = 2592,
-               offset = 56604
+               offset = 54164
             }
          }
       }
@@ -61,7 +53,7 @@ function data() return {
       jointWeights = {
          count = 3088,
          numComp = 4,
-         offset = 35372
+         offset = 35524
       },
       normal = {
          count = 11664,
@@ -79,14 +71,9 @@ function data() return {
          offset = 13980
       },
       uv0 = {
-         count = 4088,
+         count = 4240,
          numComp = 2,
          offset = 29532
-      },
-      uv1 = {
-         count = 1752,
-         numComp = 2,
-         offset = 33620
       }
    }
 } end
