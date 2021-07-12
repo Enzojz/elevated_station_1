@@ -1,0 +1,43 @@
+function data() return {
+    boundingInfo = {
+       bbMax = { 0.000000, 0.150000, 1.500000 },
+       bbMin = { -1.000000, -0.150000, 0.000000 }
+    },
+    collider = {
+       params = {  },
+       type = "MESH"
+    },
+    lods = {
+       {
+          node = {
+             children = {
+                {
+                   materials = { "station/elevated_station/frame.mtl" },
+                   mesh = "station/elevated_station/angle.msh",
+                   name = "angle",
+                   transf = {
+                      1.000000, 0.000000, -0.000000, 0.000000, 
+                      0.000000, 0.300000, 0.000000, 0.000000, 
+                      0.000000, 0.000000, 1.500000, 0.000000, 
+                      0.000000, 0.000000, 0.000000, 1.000000, 
+                   }
+                }
+             },
+             name = "RootNode",
+             transf = {
+                1.000000, 0.000000, 0.000000, 0.000000, 
+                0.000000, 1.000000, 0.000000, 0.000000, 
+                0.000000, 0.000000, 1.000000, 0.000000, 
+                0.000000, 0.000000, 0.000000, 1.000000, 
+             }
+          },
+          static = false,
+          visibleFrom = 0,
+          visibleTo = 500
+       }
+    },
+    metadata = {
+ 
+    },
+    version = 1
+ } end

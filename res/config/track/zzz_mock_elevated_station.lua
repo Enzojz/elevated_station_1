@@ -50,19 +50,19 @@ function data()
 	t.catenaryMultiGirderModel = "railroad/power_pole_1a.mdl"
 	t.catenaryMultiInnerPoleModel = "railroad/power_pole_1b.mdl"
 
-	t.bumperModel = "station/train/passenger/elevated_station/platform_end.mdl"
+	t.bumperModel = "station/elevated_station/platform_end.mdl"
 	t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "ballast_fill_stone.lua"
 	t.borderGroundTex = "ballast.lua"
 
-	t.railModel ="station/train/passenger/elevated_station/void.mdl"
-	t.sleeperModel = "station/train/passenger/elevated_station/void.mdl"
+	t.railModel ="station/elevated_station/void.mdl"
+	t.sleeperModel = "station/elevated_station/void.mdl"
 	t.trackStraightModel = {
-		"station/train/passenger/elevated_station/void.mdl",
-		"station/train/passenger/elevated_station/void.mdl",
-		"station/train/passenger/elevated_station/void.mdl",
-		"station/train/passenger/elevated_station/void.mdl",
+		"station/elevated_station/void.mdl",
+		"station/elevated_station/void.mdl",
+		"station/elevated_station/void.mdl",
+		"station/elevated_station/void.mdl",
 	}
 	
 	t.cost = 0.0

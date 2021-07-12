@@ -1,0 +1,59 @@
+function data()
+return {
+	animations = {
+		--Animation Config goes here!
+	},
+	matConfigs = {
+		{
+			0, 
+		},
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 72,
+					offset = 0,
+				},
+				position = {
+					count = 72,
+					offset = 72,
+				},
+				tangent = {
+					count = 72,
+					offset = 144,
+				},
+				uv0 = {
+					count = 72,
+					offset = 216,
+				},
+			},
+			materials = {
+				"station/elevated_station/frame.mtl",
+			},
+		},
+	},
+	vertexAttr = {
+		normal = {
+			count = 48,
+			numComp = 3,
+			offset = 288,
+		},
+		position = {
+			count = 72,
+			numComp = 3,
+			offset = 336,
+		},
+		tangent = {
+			count = 96,
+			numComp = 4,
+			offset = 408,
+		},
+		uv0 = {
+			count = 128,
+			numComp = 2,
+			offset = 504,
+		},
+	},
+}
+end

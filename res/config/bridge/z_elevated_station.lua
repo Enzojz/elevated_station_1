@@ -1,4 +1,4 @@
-local path = "station/train/passenger/elevated_station/"
+local path = "station/elevated_station/"
 function data()
     return {
         name = _("Elevated Station"),

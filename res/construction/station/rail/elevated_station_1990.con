@@ -101,15 +101,15 @@ local function makeEntry(height, length, n)
     local suffix = math.floor(height)
     local profile =
         {
-            gate = "station/train/passenger/elevated_station/entry_" .. suffix .. ".mdl",
-            rep = "station/train/passenger/elevated_station/entry_rep_" .. suffix .. ".mdl",
-            stairs = "station/train/passenger/elevated_station/entry_stairs_" .. suffix .. ".mdl",
+            gate = "station/elevated_station/entry_" .. suffix .. ".mdl",
+            rep = "station/elevated_station/entry_rep_" .. suffix .. ".mdl",
+            stairs = "station/elevated_station/entry_stairs_" .. suffix .. ".mdl",
         }
     
     local gates = func.seqMap({0, n - 1}, function(n) return newModel(profile.rep, coor.transX(n * 5)) end)
     gates[2] = newModel(profile.stairs, coor.transX(5))
     gates[n - 1] = newModel(profile.stairs, coor.transX((n - 2) * 5))
-    gates[1] = newModel(profile.gate, coor.flipX())
+    gates[1] = newModel(profile.gate, coor.flipX() * coor.flipY())
     gates[n] = newModel(profile.gate, coor.transX((n - 1) * 5))
     return gates
 end
@@ -121,11 +121,11 @@ local function makeRoof(config)
     local rad90 = math.pi * 0.5
     local f = 0.75
     
-    config.frame = "station/train/passenger/elevated_station/frame.mdl"
-    config.angle = "station/train/passenger/elevated_station/angle.mdl"
-    config.glass = "station/train/passenger/elevated_station/glass.mdl"
-    config.entryXtr = "station/train/passenger/elevated_station/entry_xtr.mdl"
-    config.tube = "station/train/passenger/elevated_station/tube.mdl"
+    config.frame = "station/elevated_station/frame.mdl"
+    config.angle = "station/elevated_station/angle.mdl"
+    config.glass = "station/elevated_station/glass.mdl"
+    config.entryXtr = "station/elevated_station/entry_xtr.mdl"
+    config.tube = "station/elevated_station/tube.mdl"
     config.steps = config.roofLength / config.span
     
     local frad = {
@@ -261,8 +261,9 @@ local function makeRoof(config)
             local vecCCW, distCCW = distVec(apex, cw)
             local mPos = coor.trans(coor.xyz(config.oX + o.x, y, config.height + o.y))
             return {
-                coor.mul(coor.scaleX(-distCW), coor.rotY(rad(vecCW)), mPos),
-                coor.mul(coor.scaleX(distCCW), coor.rotY(rad(vecCCW) - math.pi), mPos)}
+                coor.mul(coor.scaleX(-distCW), coor.rotY(rad(vecCW)), coor.flipY(), mPos),
+                coor.mul(coor.scaleX(distCCW), coor.rotY(rad(vecCCW) - math.pi), mPos)
+              }
         end
         return func.concat(
             makeAngle(pts.left.inner.top, pts.left.apex, pts.top.outer.left, pts.left.outer.top),
@@ -495,9 +496,9 @@ end
 
 local config = {
     platformRepeat = "station/train/passenger/1990/platform_double_repeat.mdl",
-    platformStart = "station/train/passenger/elevated_station/platform_double_start.mdl",
+    platformStart = "station/elevated_station/platform_double_start.mdl",
     platformEnd = "station/train/passenger/1990/platform_double_end.mdl",
-    platformDwlink = "station/train/passenger/elevated_station/platform_downstairs.mdl",
+    platformDwlink = "station/elevated_station/platform_downstairs.mdl",
     platformRoofRepeat = "station/train/passenger/1990/platform_double_roof_repeat.mdl",
     platformRoofStart = "station/train/passenger/1990/platform_double_roof_start.mdl",
     platformRoofEnd = "station/train/passenger/1990/platform_double_roof_end.mdl",

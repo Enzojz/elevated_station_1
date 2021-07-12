@@ -10,16 +10,16 @@ function data()
                     children = {
                         {
                             materials = {
-                                "station/train/passenger/elevated_station/concrete.mtl"
+                                "station/elevated_station/concrete.mtl"
                             },
-                            mesh = "station/train/passenger/elevated_station/entry_rep_12.msh",
+                            mesh = "station/elevated_station/entry_rep_12.msh",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
                         }
                     },
                     name = "RootNode",
                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 }
                 },
-                static = false,
+                static = true,
                 visibleFrom = 0,
                 visibleTo = 1000
             }

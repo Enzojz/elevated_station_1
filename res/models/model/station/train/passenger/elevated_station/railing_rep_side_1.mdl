@@ -37,8 +37,8 @@ function data() return {
                      }
                   },
                   name = "railing_rep_side_1",
-                  skin = "station/train/passenger/elevated_station/railing_rep_side_1.msh",
-                  skinMaterials = { "station/train/passenger/elevated_station/concrete_skin.mtl", "station/train/passenger/elevated_station/fence_skin.mtl" },
+                  skin = "station/elevated_station/railing_rep_side_1.msh",
+                  skinMaterials = { "station/elevated_station/concrete_skin.mtl", "station/elevated_station/fence_skin.mtl" },
                   transf = {
                      1.000000, 0.000001, -0.000000, 0.000000, 
                      -0.000001, 1.000000, -0.000000, 0.000000, 
