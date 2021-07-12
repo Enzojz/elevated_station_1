@@ -1,0 +1,7 @@
+local script = require "elevated_station"
+
+function data()
+    return {
+        updateFn = script.updateFn
+    }
+end

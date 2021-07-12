@@ -27,7 +27,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --]]
 local func = {}
 
-func.pi = require "elevatedstation/pipe"
+func.pi = require "elevated_station/pipe"
 
 function func.fold(ls, init, fun)
     return func.pi.fold(init, fun)(ls)

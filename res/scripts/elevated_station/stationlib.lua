@@ -1,7 +1,7 @@
-local func = require "elevatedstation/func"
-local pipe = require "elevatedstation/pipe"
-local coor = require "elevatedstation/coor"
-local trackEdge = require "elevatedstation/trackedge"
+local func = require "elevated_station/func"
+local pipe = require "elevated_station/pipe"
+local coor = require "elevated_station/coor"
+local trackEdge = require "elevated_station/trackedge"
 
 local newModel = function(m, ...)
     return {

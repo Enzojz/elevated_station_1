@@ -1,10 +1,10 @@
 local paramsutil = require "paramsutil"
-local func = require "elevatedstation/func"
-local pipe = require "elevatedstation/pipe"
-local coor = require "elevatedstation/coor"
-local line = require "elevatedstation/coorline"
-local trackEdge = require "elevatedstation/trackedge"
-local station = require "elevatedstation/stationlib"
+local func = require "elevated_station/func"
+local pipe = require "elevated_station/pipe"
+local coor = require "elevated_station/coor"
+local line = require "elevated_station/coorline"
+local trackEdge = require "elevated_station/trackedge"
+local station = require "elevated_station/stationlib"
 
 local platformSegments = {2, 4, 8, 12, 16, 20, 24}
 local heightList = {12.5, 15, 17.5, 20}
@@ -23,42 +23,58 @@ local function params()
     return {
         {
             key = "nbTracks",
-            name = _("Number of tracks"),
+            name = _("MENU_NR_TRACKS"),
             values = func.map(trackNumberList, tostring),
         },
         {
             key = "length",
-            name = _("Platform length") .. "(m)",
+            name = _("MENU_PLATFORM_LENGTH") .. "(m)",
             values = func.map(platformSegments, function(l) return _(tostring(l * station.segmentLength)) end),
             defaultIndex = 2
         },
-        paramsutil.makeTrackTypeParam(),
-        paramsutil.makeTrackCatenaryParam(),
+        {
+            key = "trackType",
+            name = _("MENU_TRACK_TYPE"),
+            uiType = "COMBOBOX",
+            values = {_("Standard"), _("High-speed")},
+            yearTo = 0
+        },
+        {
+            key = "catenary",
+            name = _("MENU_CATENARY"),
+            values = {_("No"), _("Yes")},
+            defaultIndex = 1,
+            yearFrom = 1900,
+            yearTo = 0
+        },
         {
             key = "trackLayout",
-            name = _("Track Layout"),
+            name = _("MENU_LAYOUT"),
             values = func.map({1, 2, 3, 4}, tostring),
             defaultIndex = 0
         },
         {
             key = "platformHeight",
-            name = _("Station height") .. "(m)",
+            name = _("MENU_HEIGHT"),
             values = func.map(heightList, tostring),
             defaultIndex = 1
         },
         {
             key = "roofLength",
-            name = "Roof length",
-            values = {_("No roof"), _("1/4"), _("1/2"), _("3/4"), _("Full")},
+            name = "MENU_ROOF_LENGTH",
+            values = {_("MENU_NO_ROOF"), _("1/4"), _("1/2"), _("3/4"), _("MENU_FULL_ROOF")},
             defaultIndex = 3
         },
         {
             key = "roofStyle",
-            name = "Roof frame Density",
-            values = {_("Normal"), _("Less dense"), ("Simple")}
+            name = "MENU_ROOF_DENSITY",
+            values = {_("MENU_DENSE_NORMAL"), _("MENU_DENSE_LESS"), ("MENU_DENSE_SIMPLE")}
         },
-        paramsutil.makeTramTrackParam1(),
-        paramsutil.makeTramTrackParam2()
+        {
+            key = "tramTrack",
+            name = _("MENU_TRAM"),
+            values = { _("No"), _("Yes"), _("Electric") },
+        }
     }
 end
 
@@ -70,7 +86,7 @@ local function makeStreet(n, tramTrack)
             type = "STREET",
             params =
             {
-                type = "station_new_small.lua",
+                type = "standard/town_small_new.lua",
                 tramTrackType = tramTrack
             },
             edges = func.flatten({
@@ -134,7 +150,7 @@ local function makeRoof(config)
         right = function(rad) return rad90 + rad * 1.2 end
     }
     
-    tubeLimit = {
+    local tubeLimit = {
         top = {
             left = (line.byRadPt(frad.top(config.baseRadMax), oTop) - line.byRadPt(frad.left(config.baseRadMax), oLeft)).x,
             right = (line.byRadPt(frad.top(config.baseRadMax), oTop) - line.byRadPt(frad.right(config.baseRadMax), oRight)).x,
@@ -192,7 +208,7 @@ local function makeRoof(config)
         lines.top.orth.left = line.byRadPt(rads.top + rad90, pts.top.inner.left)
         lines.top.orth.right = line.byRadPt(rads.top + rad90, pts.top.inner.right)
         
-        function make(side)
+        local function make(side)
             pts.top.center[side] = lines.top.center - lines.top.orth[side]
             pts.top.outer[side] = lines.top.outer - lines.top.orth[side]
             pts.top.vert[side] = ((lines.top.center - lines.vert[side]) + (lines.top.inner - lines.vert[side])) * 0.5
@@ -263,7 +279,7 @@ local function makeRoof(config)
             return {
                 coor.mul(coor.scaleX(-distCW), coor.rotY(rad(vecCW)), coor.flipY(), mPos),
                 coor.mul(coor.scaleX(distCCW), coor.rotY(rad(vecCCW) - math.pi), mPos)
-              }
+            }
         end
         return func.concat(
             makeAngle(pts.left.inner.top, pts.left.apex, pts.top.outer.left, pts.left.outer.top),
@@ -394,11 +410,14 @@ local function updateFn(config)
     end
     
     return
-        function(params)
+        function(params, closureParams)
+            local trackList = closureParams.trackList
+            local trackType = trackList[params.trackType + 1]
             defaultParams(params)
+            
             local result = {}
             
-            local trackType = ({"standard.lua", "high_speed.lua"})[params.trackType + 1]
+            -- local trackType = ({"standard.lua", "high_speed.lua"})[params.trackType + 1]
             local catenary = params.catenary == 1
             local nSeg = platformSegments[params.length + 1]
             local length = nSeg * station.segmentLength
@@ -453,8 +472,8 @@ local function updateFn(config)
             end
             
             result.edgeLists = pipe.new
-                / trackEdge.bridge(catenary, trackType, "z_elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))
-                / trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "z_elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))
+                / trackEdge.bridge(catenary, trackType, "elevated_station.lua", snapRule(#normal))(func.flatten({normal, ext1, ext2}))
+                / trackEdge.bridge(false, "zzz_mock_elevated_station.lua", "elevated_station.lua", station.noSnap)(station.generateTrackGroups(uOffsets, length))
                 + makeStreet(#xOffsets + #uOffsets, tramTrack)
             
             result.models = pipe.new
@@ -483,8 +502,8 @@ local function updateFn(config)
             }
             
             result.groundFaces = {
-                {face = f, modes = {{type = "FILL", key = "industry_gravel_small_01"}}},
-                {face = f, modes = {{type = "STROKE_OUTER", key = "building_paving"}}}
+                {face = f, modes = {{type = "FILL", key = "industry_gravel_small_01.lua"}}},
+                {face = f, modes = {{type = "STROKE_OUTER", key = "building_paving.lua"}}}
             }
             
             result.cost = 60000 + nbTracks * 24000
@@ -504,21 +523,19 @@ local config = {
     platformRoofEnd = "station/train/passenger/1990/platform_double_roof_end.mdl",
 }
 
-data = function()
-    return {
-        type = "RAIL_STATION",
-        description = {
-            name = _("Elevated Train Station"),
-            description = _("An elevated train station")
-        },
-        availability = {
-            yearFrom = 1990
-        },
-        order = 27218 * 10000,
-        soundConfig = {
-            soundSet = {name = "station_passenger_new"}
-        },
-        params = params(),
-        updateFn = updateFn(config)
-    }
-end
+return {
+    type = "RAIL_STATION",
+    description = {
+        name = _("MENU_NAME"),
+        description = _("MENU_DESC")
+    },
+    availability = {
+        yearFrom = 1990
+    },
+    order = 27218 * 10000,
+    soundConfig = {
+        soundSet = {name = "station_passenger_new"}
+    },
+    params = params(),
+    updateFn = updateFn(config)
+}

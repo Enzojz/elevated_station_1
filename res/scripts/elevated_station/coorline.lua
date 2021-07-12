@@ -1,4 +1,4 @@
-local coor = require "elevatedstation/coor"
+local coor = require "elevated_station/coor"
 local line = {}
 
 

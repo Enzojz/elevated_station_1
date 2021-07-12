@@ -26,7 +26,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --]]
 local laneutil = require "laneutil"
-local func = require "elevatedstation/func"
+local func = require "elevated_station/func"
 
 local coor = {}
 coor.make = laneutil.makeLanes
@@ -332,15 +332,6 @@ function coor.mul(...)
         m = m * params[i]
     end
     return m
-end
-
-function coor.shearYoX(s)
-    return init * {
-        1, s, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    }
 end
 
 function coor.shearYoZ(s)

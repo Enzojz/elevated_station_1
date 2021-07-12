@@ -7,19 +7,23 @@ function data()
         yearTo = 0,
         
         carriers = {"RAIL"},
+
+        -- categories = { "misc" }, 
         
         speedLimit = 100,
         
-        pillarLen = 3,
+        pillarLen = 0.001,
         
         
-        pillarMinDist = 45.0,
-        pillarMaxDist = 66.0,
-        pillarTargetDist = 50.0,
+        pillarMinDist = 35.0,
+        pillarMaxDist = 150.0,
+        pillarTargetDist = 70.0,
         
+        pillarGroundTexture = "shared/dirt.gtex.lua",
+        pillarGroundTextureOffset = 0,
         ignoreWaterCollision = true,
         cost = 540.0,
-        
+        noParallelStripSubdivision = true,
         updateFn = function(params)
             local result = {
                 railingModels = {},
@@ -67,7 +71,7 @@ function data()
                 local sp = params.railingWidth - (maxOffset - minOffset) - 2
                 
                 local width = maxOffset - minOffset
-                local nPart = math.floor(width / 5) - 1
+                local nPart = math.floor(width / 5)
                 local wPart = nPart > 0 and width / nPart or 1
                 local yScale = wPart / 5
                 
@@ -85,8 +89,8 @@ function data()
                     if interval.lanes[#interval.lanes].type ~= 1 and interval.lanes[#interval.lanes].type ~= 3 then
                         table.insert(set,
                             {
-                                id = path .. "railing_rep_side_1.mdl",
-                                transf = {-xScale, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, x, maxOffset + sp, 0, 1}
+                                id = path .. "railing_rep_side_2.mdl",
+                                transf = {xScale, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, maxOffset + sp, 0, 1}
                             })
                     end
                     
@@ -94,7 +98,7 @@ function data()
                         table.insert(set,
                             {
                                 id = path .. "railing_rep_rep.mdl",
-                                transf = {xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, 1, 0, x, minOffset + k * wPart, 0, 1}
+                                transf = {xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, 1, 0, x, minOffset + (k - 1) * wPart, 0, 1}
                             }
                     )
                     end

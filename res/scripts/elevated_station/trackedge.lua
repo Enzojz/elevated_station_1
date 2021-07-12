@@ -1,4 +1,4 @@
-local func = require "elevatedstation/func"
+local func = require "elevated_station/func"
 trackEdge = {}
 
 

@@ -21,6 +21,10 @@ function data() return {
             uv0 = {
                count = 1272,
                offset = 42172
+            },
+            uv1 = {
+               count = 1272,
+               offset = 43444
             }
          }
       },
@@ -45,6 +49,10 @@ function data() return {
             uv0 = {
                count = 2592,
                offset = 53764
+            },
+            uv1 = {
+               count = 2592,
+               offset = 56356
             }
          }
       }
@@ -74,6 +82,11 @@ function data() return {
          count = 4224,
          numComp = 2,
          offset = 29340
+      },
+      uv1 = {
+         count = 1736,
+         numComp = 2,
+         offset = 33564
       }
    }
 } end
