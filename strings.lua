@@ -57,6 +57,9 @@ function data()
             MENU_DENSE_LESS = "Less dense",
             MENU_DENSE_NORMAL = "Normal",
             MENU_DENSE_SIMPLE = "Simple",
+            MENU_TRACK_TYPE = "Track Type",
+            MENU_CATENARY = "Catenary",
+            MENU_FULL_ROOF = "Full roof"
         },
         fr = {
             MOD_NAME = "Gare surélévée",
@@ -74,6 +77,9 @@ function data()
             MENU_DENSE_LESS = "Moins dense",
             MENU_DENSE_NORMAL = "Normale",
             MENU_DENSE_SIMPLE = "Simple",
+            MENU_TRACK_TYPE = "Type de voie",
+            MENU_CATENARY = "Caténaire",
+            MENU_FULL_ROOF = "Complet"
         },
         zh_CN = {
             MOD_NAME = "高架车站",
@@ -91,10 +97,13 @@ function data()
             MENU_DENSE_LESS = "疏",
             MENU_DENSE_NORMAL = "标准",
             MENU_DENSE_SIMPLE = "普通",
+            MENU_TRACK_TYPE = "轨道类型",
+            MENU_CATENARY = "接触网",
+            MENU_FULL_ROOF = "全长"
         },
         zh_TW = {
             MOD_NAME = "高架車站",
-            MOD_DESC = desc_ts,
+            MOD_DESC = desc_zh,
             MENU_NAME = "高架車站",
             MENU_DESC = "一座高架車站",
             MENU_NR_TRACKS = "軌道數量",
@@ -108,6 +117,9 @@ function data()
             MENU_DENSE_LESS = "疏",
             MENU_DENSE_NORMAL = "標準",
             MENU_DENSE_SIMPLE = "普通",
+            MENU_TRACK_TYPE = "軌道類型",
+            MENU_CATENARY = "接觸網",
+            MENU_FULL_ROOF = "全長"
         },
     }
 end

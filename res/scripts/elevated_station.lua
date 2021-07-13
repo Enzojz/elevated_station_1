@@ -28,8 +28,8 @@ local function params()
         },
         {
             key = "length",
-            name = _("MENU_PLATFORM_LENGTH") .. "(m)",
-            values = func.map(platformSegments, function(l) return _(tostring(l * station.segmentLength)) end),
+            name = _("MENU_PLATFORM_LENGTH"),
+            values = func.map(platformSegments, function(l) return tostring(l * station.segmentLength) end),
             defaultIndex = 2
         },
         {
@@ -61,14 +61,14 @@ local function params()
         },
         {
             key = "roofLength",
-            name = "MENU_ROOF_LENGTH",
-            values = {_("MENU_NO_ROOF"), _("1/4"), _("1/2"), _("3/4"), _("MENU_FULL_ROOF")},
+            name = _("MENU_ROOF_LENGTH"),
+            values = {_("MENU_NO_ROOF"), "1/4", "1/2", "3/4", _("MENU_FULL_ROOF")},
             defaultIndex = 3
         },
         {
             key = "roofStyle",
-            name = "MENU_ROOF_DENSITY",
-            values = {_("MENU_DENSE_NORMAL"), _("MENU_DENSE_LESS"), ("MENU_DENSE_SIMPLE")}
+            name = _("MENU_ROOF_DENSITY"),
+            values = {_("MENU_DENSE_NORMAL"), _("MENU_DENSE_LESS"), _("MENU_DENSE_SIMPLE")}
         },
         {
             key = "tramTrack",
@@ -77,7 +77,6 @@ local function params()
         }
     }
 end
-
 
 local function makeStreet(n, tramTrack)
     local l = n * 5 - 15
