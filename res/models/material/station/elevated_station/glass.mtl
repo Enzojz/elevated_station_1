@@ -40,11 +40,11 @@ return {
 			
 		},
 		map_op_1 = {
-			fileName = "unknown_texture.tga",
+			fileName = "unknown_texture.dds",
 			type = "TWOD",
 		},
 		map_op_2 = {
-			fileName = "unknown_texture.tga",
+			fileName = "unknown_texture.dds",
 			type = "TWOD",
 		},
 		operation_1 = {
